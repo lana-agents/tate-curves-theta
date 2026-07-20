@@ -1,4 +1,5 @@
 import TateCurvesTheta.Analysis.MaxTerm
+import TateCurvesTheta.Analysis.Strassmann
 import TateCurvesTheta.Analysis.UltrametricSum
 import TateCurvesTheta.AnalyticQuotient
 import TateCurvesTheta.Basic
