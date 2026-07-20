@@ -17,5 +17,6 @@ import TateCurvesTheta.Theta.LaurentSphere
 import TateCurvesTheta.Theta.LaurentUnique
 import TateCurvesTheta.Theta.Periodicity
 import TateCurvesTheta.Theta.Product
+import TateCurvesTheta.Theta.StrictDominant
 import TateCurvesTheta.Theta.Uniqueness
 import TateCurvesTheta.Uniformization
