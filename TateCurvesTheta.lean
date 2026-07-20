@@ -1,5 +1,6 @@
 import TateCurvesTheta.Analysis.MaxTerm
 import TateCurvesTheta.Analysis.Strassmann
+import TateCurvesTheta.Analysis.StrassmannSphere
 import TateCurvesTheta.Analysis.UltrametricSum
 import TateCurvesTheta.AnalyticQuotient
 import TateCurvesTheta.Basic
@@ -17,6 +18,7 @@ import TateCurvesTheta.Theta.Divisor
 import TateCurvesTheta.Theta.LaurentSphere
 import TateCurvesTheta.Theta.LaurentSphereReduce
 import TateCurvesTheta.Theta.LaurentUnique
+import TateCurvesTheta.Theta.LaurentUnitSphere
 import TateCurvesTheta.Theta.Periodicity
 import TateCurvesTheta.Theta.Product
 import TateCurvesTheta.Theta.StrictDominant
