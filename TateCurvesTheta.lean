@@ -8,4 +8,5 @@ import TateCurvesTheta.TateCurve.Parametrization
 import TateCurvesTheta.TateCurve.Weierstrass
 import TateCurvesTheta.Theta.Basic
 import TateCurvesTheta.Theta.Periodicity
+import TateCurvesTheta.Theta.Product
 import TateCurvesTheta.Uniformization
