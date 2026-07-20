@@ -56,6 +56,9 @@ single index — if any — with `‖x‖ = 1` is irrelevant to a cofinite limit
 * `TateParameter.one_sub_qzpow_mul_ne_zero`: `1 - qⁿ u ≠ 0` for `u ∉ qᶻ`.
 * `TateParameter.Xterm_summable`, `TateParameter.Yterm_summable`: the coordinate series
   converge over a complete nonarchimedean field.
+* `TateParameter.X_q_smul`, `TateParameter.Y_q_smul`: `q`-periodicity of the coordinate
+  functions, `X(q·u) = X(u)` and `Y(q·u) = Y(u)` — the invariance that makes the Tate
+  parametrization descend to the analytic quotient `Kˣ/qᶻ`.
 
 ## References
 
@@ -97,6 +100,40 @@ def Y (u : Kˣ) : K := (∑' n : ℤ, t.Yterm u n) + t.eisenstein 1
 lemma X_apply (u : Kˣ) : t.X u = (∑' n : ℤ, t.Xterm u n) - 2 * t.eisenstein 1 := rfl
 
 lemma Y_apply (u : Kˣ) : t.Y u = (∑' n : ℤ, t.Yterm u n) + t.eisenstein 1 := rfl
+
+/-- **`q`-periodicity of the `X`-terms.** Substituting `u ↦ q·u` shifts the index by one:
+`Xterm (q·u) n = Xterm u (n + 1)`, because `qⁿ (q u) = qⁿ⁺¹ u`. Unconditional. -/
+lemma Xterm_q_smul (u : Kˣ) (n : ℤ) : t.Xterm (t.q * u) n = t.Xterm u (n + 1) := by
+  have hq : (t.q : K) ≠ 0 := t.q.ne_zero
+  simp only [Xterm_apply, Units.val_mul, zpow_add_one₀ hq]
+  ring
+
+/-- **`q`-periodicity of the `Y`-terms.** Substituting `u ↦ q·u` shifts the index by one:
+`Yterm (q·u) n = Yterm u (n + 1)`, because `qⁿ (q u) = qⁿ⁺¹ u`. Unconditional. -/
+lemma Yterm_q_smul (u : Kˣ) (n : ℤ) : t.Yterm (t.q * u) n = t.Yterm u (n + 1) := by
+  have hq : (t.q : K) ≠ 0 := t.q.ne_zero
+  simp only [Yterm_apply, Units.val_mul, zpow_add_one₀ hq]
+  ring
+
+/-- **`q`-periodicity of the Tate `X`-coordinate.** `X(q·u) = X(u)`: the bi-infinite series is
+invariant under the index shift `n ↦ n + 1` induced by `u ↦ q·u` (`Equiv.tsum_eq` with
+`Equiv.addRight 1`), while the constant `-2 s₁(q)` is unchanged. This is the analytic fact that
+makes the Tate parametrization descend to the analytic quotient `Kˣ/qᶻ`. -/
+lemma X_q_smul (u : Kˣ) : t.X (t.q * u) = t.X u := by
+  have key : ∑' n : ℤ, t.Xterm (t.q * u) n = ∑' n : ℤ, t.Xterm u n := by
+    rw [← (Equiv.addRight (1 : ℤ)).tsum_eq (t.Xterm u)]
+    exact tsum_congr fun n => t.Xterm_q_smul u n
+  rw [X_apply, X_apply, key]
+
+/-- **`q`-periodicity of the Tate `Y`-coordinate.** `Y(q·u) = Y(u)`: as for `X`, the bi-infinite
+series is invariant under the index shift `n ↦ n + 1` induced by `u ↦ q·u`, and the constant
+`+ s₁(q)` is unchanged. Together with `X_q_smul` this lets `u ↦ (X(u), Y(u))` factor through
+`Kˣ/qᶻ`. -/
+lemma Y_q_smul (u : Kˣ) : t.Y (t.q * u) = t.Y u := by
+  have key : ∑' n : ℤ, t.Yterm (t.q * u) n = ∑' n : ℤ, t.Yterm u n := by
+    rw [← (Equiv.addRight (1 : ℤ)).tsum_eq (t.Yterm u)]
+    exact tsum_congr fun n => t.Yterm_q_smul u n
+  rw [Y_apply, Y_apply, key]
 
 /-- For `u ∉ qᶻ` — equivalently `qⁿ u ≠ 1` for all `n : ℤ` — the factor `1 - qⁿ u` occurring in
 the denominators of the Tate coordinate series is nonzero. -/
