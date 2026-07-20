@@ -1,1 +1,2 @@
 import TateCurvesTheta.Basic
+import TateCurvesTheta.QParameter.Basic
