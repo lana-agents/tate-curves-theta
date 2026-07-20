@@ -5,6 +5,7 @@ import TateCurvesTheta.QParameter.BaseChange
 import TateCurvesTheta.QParameter.Basic
 import TateCurvesTheta.QParameter.PrimeToOrder
 import TateCurvesTheta.TateCurve.Discriminant
+import TateCurvesTheta.TateCurve.IntegralModel
 import TateCurvesTheta.TateCurve.Parametrization
 import TateCurvesTheta.TateCurve.Quotient
 import TateCurvesTheta.TateCurve.Weierstrass
