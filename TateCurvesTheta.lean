@@ -1,2 +1,3 @@
 import TateCurvesTheta.AnalyticQuotient
 import TateCurvesTheta.Basic
+import TateCurvesTheta.QParameter.Basic
