@@ -24,6 +24,7 @@ import TateCurvesTheta.Theta.LaurentUnitSphere
 import TateCurvesTheta.Theta.Periodicity
 import TateCurvesTheta.Theta.Product
 import TateCurvesTheta.Theta.RatioAnnulus
+import TateCurvesTheta.Theta.SeriesZero
 import TateCurvesTheta.Theta.StrictDominant
 import TateCurvesTheta.Theta.ThetaProdLaurent
 import TateCurvesTheta.Theta.TripleProduct
