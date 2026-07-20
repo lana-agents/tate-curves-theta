@@ -3,3 +3,4 @@ import TateCurvesTheta.Basic
 import TateCurvesTheta.QParameter.BaseChange
 import TateCurvesTheta.QParameter.Basic
 import TateCurvesTheta.QParameter.PrimeToOrder
+import TateCurvesTheta.Theta.Basic
