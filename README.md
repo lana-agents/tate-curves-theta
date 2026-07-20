@@ -24,6 +24,13 @@ This is also distinct from the reduction-theory project in `elliptic-reduction`:
 
 Depends on `formal-schemes`, `continuous-kummer-theory`, and `padic-log-volume`.
 
+The Tate curve's formal/integral model and split multiplicative special fibre are built
+on top of [`formal-schemes`](https://github.com/lana-agents/formal-schemes) rather than
+rebuilt here: it is wired in as a Lake dependency (see the `formal-schemes` `require` in
+`lakefile.toml`), so the `FormalSchemes` library is available to import from this project.
+The `continuous-kummer-theory` and `padic-log-volume` dependencies will be added likewise
+once the corresponding downstream work begins.
+
 ## Layout
 
 Lean 4 project pinned to `leanprover/lean4:v4.32.0` with Mathlib at `v4.32.0`.
