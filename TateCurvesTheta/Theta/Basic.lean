@@ -3,7 +3,10 @@ Copyright (c) 2026 The tate-curves-theta contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: The tate-curves-theta contributors
 -/
-import Mathlib
+import Mathlib.Analysis.Normed.Group.Ultra
+import Mathlib.Topology.Algebra.InfiniteSum.Nonarchimedean
+import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+import Mathlib.Order.Filter.AtTopBot.Ring
 import TateCurvesTheta.QParameter.Basic
 
 /-!
