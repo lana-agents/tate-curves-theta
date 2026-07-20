@@ -14,6 +14,7 @@ import TateCurvesTheta.TateCurve.Weierstrass
 import TateCurvesTheta.TateCurve.WeierstrassIdentity
 import TateCurvesTheta.Theta.Basic
 import TateCurvesTheta.Theta.Divisor
+import TateCurvesTheta.Theta.FactorSeries
 import TateCurvesTheta.Theta.LaurentSphere
 import TateCurvesTheta.Theta.LaurentUnique
 import TateCurvesTheta.Theta.Periodicity
