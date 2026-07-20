@@ -4,4 +4,5 @@ import TateCurvesTheta.QParameter.BaseChange
 import TateCurvesTheta.QParameter.Basic
 import TateCurvesTheta.QParameter.PrimeToOrder
 import TateCurvesTheta.TateCurve.Weierstrass
+import TateCurvesTheta.Theta.Basic
 import TateCurvesTheta.Uniformization
