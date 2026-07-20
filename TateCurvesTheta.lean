@@ -6,6 +6,7 @@ import TateCurvesTheta.QParameter.PrimeToOrder
 import TateCurvesTheta.TateCurve.Discriminant
 import TateCurvesTheta.TateCurve.Parametrization
 import TateCurvesTheta.TateCurve.Weierstrass
+import TateCurvesTheta.TateCurve.WeierstrassIdentity
 import TateCurvesTheta.Theta.Basic
 import TateCurvesTheta.Theta.Periodicity
 import TateCurvesTheta.Theta.Product
