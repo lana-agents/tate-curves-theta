@@ -14,5 +14,10 @@ name = "mathlib"
 scope = "leanprover-community"
 rev = "v4.32.0"
 
+[[require]]
+name = "formal-schemes"
+git = "https://github.com/lana-agents/formal-schemes"
+rev = "51aa935079537bf4dc580751a6e70727fb23ca93"
+
 [[lean_lib]]
 name = "TateCurvesTheta"
