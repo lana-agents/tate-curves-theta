@@ -7,6 +7,7 @@ import TateCurvesTheta.Basic
 import TateCurvesTheta.QParameter.BaseChange
 import TateCurvesTheta.QParameter.Basic
 import TateCurvesTheta.QParameter.PrimeToOrder
+import TateCurvesTheta.TateCurve.CoordinateAnnulusLaurentY
 import TateCurvesTheta.TateCurve.CoordinateExpansion
 import TateCurvesTheta.TateCurve.Discriminant
 import TateCurvesTheta.TateCurve.IntegralModel
