@@ -24,6 +24,7 @@ import TateCurvesTheta.Theta.LaurentSphere
 import TateCurvesTheta.Theta.LaurentSphereReduce
 import TateCurvesTheta.Theta.LaurentUnique
 import TateCurvesTheta.Theta.LaurentUnitSphere
+import TateCurvesTheta.Theta.Normalization
 import TateCurvesTheta.Theta.Periodicity
 import TateCurvesTheta.Theta.Product
 import TateCurvesTheta.Theta.RatioAnnulus
