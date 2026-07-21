@@ -11,6 +11,7 @@ import TateCurvesTheta.TateCurve.CoordinateExpansion
 import TateCurvesTheta.TateCurve.Discriminant
 import TateCurvesTheta.TateCurve.IntegralModel
 import TateCurvesTheta.TateCurve.Parametrization
+import TateCurvesTheta.TateCurve.PointMap
 import TateCurvesTheta.TateCurve.Quotient
 import TateCurvesTheta.TateCurve.Weierstrass
 import TateCurvesTheta.TateCurve.WeierstrassIdentity
