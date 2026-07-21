@@ -63,10 +63,16 @@ analytic work); this file delivers the reusable reduction that consumes them.
 
 * `TateParameter.theta_eq_const_mul_thetaProd` : given `LaurentCoeffUnique K` and
   `RatioLaurentRepr t`, there is a constant `c₀` with `theta u = c₀ · thetaProd u` for all `u`.
-* `TateParameter.theta_eq_thetaProd` : with, in addition, one normalization value
+* `TateParameter.theta_eq_thetaProd_of_ratioLaurent` : with, in addition, one normalization value
   (`theta u₀ = thetaProd u₀` at a point `u₀` where `thetaProd u₀ ≠ 0`), `theta = thetaProd`.
-* `TateParameter.theta_eq_zero_iff` : consequently the series-theta divisor is the `qᶻ`-orbit of
-  `-1`, unconditionally on the `theta = thetaProd` seam (only on the two inputs above).
+* `TateParameter.theta_eq_zero_iff_of_ratioLaurent` : consequently the series-theta divisor is the
+  `qᶻ`-orbit of `-1`, unconditionally on the `theta = thetaProd` seam (only the two inputs above).
+
+Note. This file uses the (now-superseded) `RatioLaurentRepr` route, whose global-summability clause
+is obstructed (see `Theta/ThetaProdLaurent.lean`). The **unconditional** `theta = thetaProd` and its
+divisor corollary — carrying *no* hypotheses beyond the ambient ones — are `theta_eq_thetaProd` and
+`theta_eq_zero_iff` in `Theta/Durfee.lean`; prefer those. The two theorems here are retained as the
+record of the `RatioLaurentRepr`-conditional route and renamed with an `_of_ratioLaurent` suffix.
 
 ## References
 
@@ -120,7 +126,8 @@ one point `u₀` where `thetaProd u₀ ≠ 0` and `theta u₀ = thetaProd u₀`.
 `c₀` of `theta_eq_const_mul_thetaProd` to `1`, giving `theta u = thetaProd u` for every `u`
 (including the zero locus `-qᶻ`, where both sides vanish, since the factorization is stated for
 all `u`). -/
-theorem theta_eq_thetaProd (huniq : LaurentCoeffUnique K) (hrepr : t.RatioLaurentRepr)
+theorem theta_eq_thetaProd_of_ratioLaurent (huniq : LaurentCoeffUnique K)
+    (hrepr : t.RatioLaurentRepr)
     {u₀ : Kˣ} (hu₀ : t.thetaProd u₀ ≠ 0) (hnorm : t.theta u₀ = t.thetaProd u₀) (u : Kˣ) :
     t.theta u = t.thetaProd u := by
   obtain ⟨c₀, hc₀⟩ := t.theta_eq_const_mul_thetaProd huniq hrepr
@@ -139,11 +146,12 @@ the coefficient-uniqueness principle, the ratio's Laurent representation, and th
 normalization value, the series `theta` vanishes exactly on the `qᶻ`-orbit of `-1`:
 `theta u = 0 ↔ ∃ k : ℤ, (u : K) = -qᵏ`. This discharges the conditionality of
 `theta_eq_zero_iff_of_eq_thetaProd` (`Theta/Divisor.lean`, #88). -/
-theorem theta_eq_zero_iff [CompleteSpace K] (huniq : LaurentCoeffUnique K)
+theorem theta_eq_zero_iff_of_ratioLaurent [CompleteSpace K] (huniq : LaurentCoeffUnique K)
     (hrepr : t.RatioLaurentRepr) {u₀ : Kˣ} (hu₀ : t.thetaProd u₀ ≠ 0)
     (hnorm : t.theta u₀ = t.thetaProd u₀) (u : Kˣ) :
     t.theta u = 0 ↔ ∃ k : ℤ, (u : K) = -(t.q : K) ^ k :=
-  t.theta_eq_zero_iff_of_eq_thetaProd u (t.theta_eq_thetaProd huniq hrepr hu₀ hnorm u)
+  t.theta_eq_zero_iff_of_eq_thetaProd u
+    (t.theta_eq_thetaProd_of_ratioLaurent huniq hrepr hu₀ hnorm u)
 
 end TateParameter
 
