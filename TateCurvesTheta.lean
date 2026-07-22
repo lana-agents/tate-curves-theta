@@ -12,6 +12,7 @@ import TateCurvesTheta.TateCurve.CoordinateAnnulusLaurent
 import TateCurvesTheta.TateCurve.CoordinateAnnulusLaurentY
 import TateCurvesTheta.TateCurve.CoordinateExpansion
 import TateCurvesTheta.TateCurve.DefectAnnulusLaurent
+import TateCurvesTheta.TateCurve.DefectCoeffBaseChange
 import TateCurvesTheta.TateCurve.DefectVanishing
 import TateCurvesTheta.TateCurve.Discriminant
 import TateCurvesTheta.TateCurve.EisensteinKernels
@@ -44,4 +45,5 @@ import TateCurvesTheta.Theta.ThetaProdGlobalLaurent
 import TateCurvesTheta.Theta.ThetaProdLaurent
 import TateCurvesTheta.Theta.TripleProduct
 import TateCurvesTheta.Theta.Uniqueness
+import TateCurvesTheta.Theta.WeightSpace
 import TateCurvesTheta.Uniformization
