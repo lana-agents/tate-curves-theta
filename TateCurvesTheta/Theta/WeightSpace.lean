@@ -740,6 +740,184 @@ theorem exists_convBlock_eq (hk : 0 < k) (e : Kˣ) {x₀ : Kˣ}
     exact hF
   exact hFmem
 
+/-- Family-level form of the division theorem, with the ambient multiplier given by a
+propositional equation — convenient at application sites. -/
+theorem exists_convBlock_eq' (hk : 0 < k) (e : Kˣ) {M : Kˣ} (hM : (t.q * e)⁻¹ * A = M)
+    {x₀ : Kˣ} (hx₀ : t.theta (e * x₀) = 0)
+    (g : t.weightSpace (1 + k) M) (hg : evalAt x₀ (1 + k) M g ≠ 0)
+    (F : t.weightSpace (1 + k) M) (hF : evalAt x₀ (1 + k) M F = 0) :
+    ∃ c : t.weightSpace k A,
+      ∀ n : ℤ, (∑' m : ℤ, t.thetaBlock e (n - m) * (c : ℤ → K) m) = (F : ℤ → K) n := by
+  subst hM
+  obtain ⟨c, hc⟩ := exists_convBlock_eq hk e hx₀ g hg F hF
+  exact ⟨c, fun n => by rw [← hc]; rfl⟩
+
+/-- **Weight-one classification**: a weight-one family is a scalar multiple of the theta
+block with the matching multiplier. -/
+theorem w1_eq_smul_thetaBlock {A : Kˣ} {c : ℤ → K}
+    (hc : t.IsWeightFamily 1 A c) :
+    c = c 0 • t.thetaBlock ((t.q * A)⁻¹) := by
+  have hblock := isWeightFamily_thetaBlock (t := t) ((t.q * A)⁻¹)
+  have hmul : (t.q * (t.q * A)⁻¹)⁻¹ = A := by
+    rw [mul_inv, inv_inv, ← mul_assoc, inv_mul_cancel, one_mul]
+  rw [hmul] at hblock
+  refine IsWeightFamily.ext_initial Nat.one_pos hc (hblock.smul (c 0)) fun i hi => ?_
+  interval_cases i
+  simp [thetaBlock_apply, thetaExp]
+
+/-- **Uniqueness off one orbit**: globally summable families whose series agree at every
+point off the `qᶻ`-orbit are equal — Strassmann finiteness against the infinitely many
+norm-one witnesses. -/
+theorem laurent_ext_off_orbit {a b : ℤ → K}
+    (ha : ∀ u : Kˣ, Summable fun n : ℤ => a n * (u : K) ^ n)
+    (hb : ∀ u : Kˣ, Summable fun n : ℤ => b n * (u : K) ^ n)
+    (h : ∀ u : Kˣ, (∀ n : ℤ, (t.q : K) ^ n * (u : K) ≠ 1) →
+      (∑' n : ℤ, a n * (u : K) ^ n) = ∑' n : ℤ, b n * (u : K) ^ n) : a = b := by
+  by_contra hne
+  have hd0 : (fun n : ℤ => a n - b n) ≠ 0 := by
+    intro h0
+    exact hne (funext fun n => sub_eq_zero.mp (congrFun h0 n))
+  have hdsum : Summable fun n : ℤ => a n - b n := by
+    refine ((ha 1).sub (hb 1)).congr fun n => ?_
+    simp
+  have hfin := TateCurvesTheta.StrassmannSphere.finite_zeros hdsum hd0
+  have hmem : ∀ j : ℕ, ((t.sphereWitness j : Kˣ) : K) ∈
+      {v : K | ‖v‖ = 1 ∧ (∑' n : ℤ, (a n - b n) * v ^ n) = 0} := by
+    intro j
+    have hnorm : ‖((t.sphereWitness j : Kˣ) : K)‖ = 1 := by
+      rw [t.sphereWitness_val]
+      exact t.norm_one_add_qpow j
+    refine ⟨hnorm, ?_⟩
+    have hoff : ∀ n : ℤ, (t.q : K) ^ n * ((t.sphereWitness j : Kˣ) : K) ≠ 1 := by
+      intro n hcontra
+      have h1 := congrArg norm hcontra
+      rw [norm_mul, norm_zpow, hnorm, mul_one, norm_one] at h1
+      have hq1 : ‖(t.q : K)‖ < 1 := t.norm_lt_one
+      have hq0 : 0 < ‖(t.q : K)‖ := t.norm_q_pos
+      have hn0 : n = 0 := by
+        by_contra hn
+        rcases lt_or_gt_of_ne hn with hlt | hgt
+        · have hmono := zpow_lt_zpow_right_of_lt_one₀ hq0 hq1 hlt
+          rw [zpow_zero, h1] at hmono
+          exact lt_irrefl _ hmono
+        · have hmono := zpow_lt_zpow_right_of_lt_one₀ hq0 hq1 hgt
+          rw [zpow_zero, h1] at hmono
+          exact lt_irrefl _ hmono
+      rw [hn0, zpow_zero, one_mul, t.sphereWitness_val] at hcontra
+      have hz : (t.q : K) ^ (j + 1) = 0 := by linear_combination hcontra
+      exact pow_ne_zero (j + 1) t.q.ne_zero hz
+    have heq := h (t.sphereWitness j) hoff
+    calc (∑' n : ℤ, (a n - b n) * ((t.sphereWitness j : Kˣ) : K) ^ n)
+        = ∑' n : ℤ, (a n * ((t.sphereWitness j : Kˣ) : K) ^ n
+            - b n * ((t.sphereWitness j : Kˣ) : K) ^ n) := by
+          refine tsum_congr fun n => ?_
+          ring
+      _ = (∑' n : ℤ, a n * ((t.sphereWitness j : Kˣ) : K) ^ n)
+            - ∑' n : ℤ, b n * ((t.sphereWitness j : Kˣ) : K) ^ n :=
+          Summable.tsum_sub (ha _) (hb _)
+      _ = 0 := by rw [heq, sub_self]
+  have hinj : Function.Injective fun j : ℕ => ((t.sphereWitness j : Kˣ) : K) :=
+    fun x y hxy => t.sphereWitness_injective (Units.ext hxy)
+  exact Set.infinite_of_injective_forall_mem hinj hmem hfin
+
+/-- Weight-family membership from the value functional equation off the orbit. -/
+theorem isWeightFamily_of_tsum_q_smul_off_orbit {k : ℕ} {A : Kˣ} {c : ℤ → K}
+    (hsum : ∀ u : Kˣ, Summable fun n : ℤ => c n * (u : K) ^ n)
+    (h : ∀ u : Kˣ, (∀ n : ℤ, (t.q : K) ^ n * (u : K) ≠ 1) →
+      (∑' n : ℤ, c n * ((t.q : K) * (u : K)) ^ n)
+        = (A : K) * (u : K) ^ (-(k : ℤ)) * ∑' n : ℤ, c n * (u : K) ^ n) :
+    t.IsWeightFamily k A c := by
+  refine ⟨hsum, fun n => ?_⟩
+  have hsumA : ∀ u : Kˣ, Summable fun n : ℤ => ((t.q : K) ^ n * c n) * (u : K) ^ n := by
+    intro u
+    refine (hsum (t.q * u)).congr fun n => ?_
+    rw [Units.val_mul, mul_zpow]
+    ring
+  have hsumB : ∀ u : Kˣ, Summable fun n : ℤ => ((A : K) * c (n + k)) * (u : K) ^ n := by
+    intro u
+    have h1 : Summable fun n : ℤ => c (n + k) * (u : K) ^ (n + k) :=
+      (hsum u).comp_injective (add_left_injective (k : ℤ))
+    have h2 := h1.mul_right ((u : K) ^ (-(k : ℤ)))
+    have h3 : Summable fun n : ℤ => c (n + k) * (u : K) ^ n := by
+      refine h2.congr fun n => ?_
+      rw [mul_assoc, ← zpow_add₀ (Units.ne_zero u)]
+      congr 2
+      omega
+    refine (h3.mul_left (A : K)).congr fun n => ?_
+    ring
+  have key : (fun n : ℤ => (t.q : K) ^ n * c n) = fun n : ℤ => (A : K) * c (n + k) := by
+    refine laurent_ext_off_orbit (t := t) hsumA hsumB fun u hu => ?_
+    have hL : (∑' n : ℤ, ((t.q : K) ^ n * c n) * (u : K) ^ n)
+        = ∑' n : ℤ, c n * ((t.q : K) * (u : K)) ^ n := by
+      refine tsum_congr fun n => ?_
+      rw [mul_zpow]
+      ring
+    have hR : (∑' n : ℤ, ((A : K) * c (n + k)) * (u : K) ^ n)
+        = (A : K) * (u : K) ^ (-(k : ℤ)) * ∑' n : ℤ, c n * (u : K) ^ n := by
+      have h2 : (∑' n : ℤ, c (n + k) * (u : K) ^ (n + k))
+          = ∑' n : ℤ, c n * (u : K) ^ n := by
+        rw [← (Equiv.addRight (k : ℤ)).tsum_eq fun n => c n * (u : K) ^ n]
+        exact tsum_congr fun n => rfl
+      rw [← h2, ← tsum_mul_left]
+      refine tsum_congr fun n => ?_
+      rw [zpow_add₀ (Units.ne_zero u), zpow_neg]
+      field_simp
+    rw [hL, hR, h u hu]
+  have hkey := congrFun key n
+  linear_combination -hkey
+
+omit [CompleteSpace K] in
+/-- **Avoiding finitely many orbit classes**: some unit lies outside every `qᶻy`-class for
+`y` in a given finite set — infinitely many witnesses, finitely many classes. -/
+theorem exists_unit_avoiding (S : Finset Kˣ) :
+    ∃ s : Kˣ, ∀ y ∈ S, ∀ n : ℤ, (s : K) ≠ (t.q : K) ^ n * (y : K) := by
+  by_contra hcontra
+  rw [not_exists] at hcontra
+  have hchoice : ∀ j : ℕ, ∃ y ∈ S, ∃ n : ℤ,
+      ((t.sphereWitness j : Kˣ) : K) = (t.q : K) ^ n * (y : K) := by
+    intro j
+    by_contra hj
+    exact hcontra (t.sphereWitness j) fun y hy n hn => hj ⟨y, hy, n, hn⟩
+  choose f hfS g hfg using hchoice
+  have hSfin : Set.Finite (Set.range f) := (S.finite_toSet.subset (by
+    rintro _ ⟨j, rfl⟩
+    exact hfS j))
+  have hinjW : Function.Injective t.sphereWitness := t.sphereWitness_injective
+  -- two witnesses on the same class coincide: contradiction with infinitude
+  have hkey : ∀ j₁ j₂ : ℕ, f j₁ = f j₂ → j₁ = j₂ := by
+    intro j₁ j₂ hf12
+    have h₁ := hfg j₁
+    have h₂ := hfg j₂
+    rw [hf12] at h₁
+    have hnorm₁ : ‖((t.sphereWitness j₁ : Kˣ) : K)‖ = 1 := by
+      rw [t.sphereWitness_val]; exact t.norm_one_add_qpow j₁
+    have hnorm₂ : ‖((t.sphereWitness j₂ : Kˣ) : K)‖ = 1 := by
+      rw [t.sphereWitness_val]; exact t.norm_one_add_qpow j₂
+    have hq1 : ‖(t.q : K)‖ < 1 := t.norm_lt_one
+    have hq0 : 0 < ‖(t.q : K)‖ := t.norm_q_pos
+    have hnn : g j₁ = g j₂ := by
+      have e₁ := congrArg norm h₁
+      have e₂ := congrArg norm h₂
+      rw [norm_mul, norm_zpow, hnorm₁] at e₁
+      rw [norm_mul, norm_zpow, hnorm₂] at e₂
+      have hy0 : 0 < ‖((f j₂ : Kˣ) : K)‖ := norm_pos_iff.mpr (Units.ne_zero _)
+      have heq : ‖(t.q : K)‖ ^ g j₁ = ‖(t.q : K)‖ ^ g j₂ :=
+        mul_right_cancel₀ hy0.ne' (e₁.symm.trans e₂)
+      by_contra hne'
+      rcases lt_or_gt_of_ne hne' with hlt | hgt
+      · have := zpow_lt_zpow_right_of_lt_one₀ hq0 hq1 hlt
+        rw [heq] at this
+        exact lt_irrefl _ this
+      · have := zpow_lt_zpow_right_of_lt_one₀ hq0 hq1 hgt
+        rw [heq] at this
+        exact lt_irrefl _ this
+    rw [hnn] at h₁
+    have : ((t.sphereWitness j₁ : Kˣ) : K) = ((t.sphereWitness j₂ : Kˣ) : K) :=
+      h₁.trans h₂.symm
+    exact hinjW (Units.ext this)
+  have hinjf : Function.Injective f := fun a b hab => hkey a b hab
+  exact Set.infinite_range_of_injective hinjf hSfin
+
 end Block
 
 end TateParameter

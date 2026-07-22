@@ -11,6 +11,7 @@ import TateCurvesTheta.QParameter.PrimeToOrder
 import TateCurvesTheta.TateCurve.CoordinateAnnulusLaurent
 import TateCurvesTheta.TateCurve.CoordinateAnnulusLaurentY
 import TateCurvesTheta.TateCurve.CoordinateExpansion
+import TateCurvesTheta.TateCurve.CoordinateInversion
 import TateCurvesTheta.TateCurve.DefectAnnulusLaurent
 import TateCurvesTheta.TateCurve.DefectCoeffBaseChange
 import TateCurvesTheta.TateCurve.DefectVanishing
