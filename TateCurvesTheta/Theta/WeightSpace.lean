@@ -918,6 +918,150 @@ theorem exists_unit_avoiding (S : Finset Kˣ) :
   have hinjf : Function.Injective f := fun a b hab => hkey a b hab
   exact Set.infinite_range_of_injective hinjf hSfin
 
+omit [CompleteSpace K] in
+/-- At most one norm-one witness `1 + qʲ⁺¹` lies on any given `qᶻ`-class. -/
+private lemma witness_class_unique {y : Kˣ} {j₁ j₂ : ℕ} {n₁ n₂ : ℤ}
+    (h₁ : ((t.sphereWitness j₁ : Kˣ) : K) = (t.q : K) ^ n₁ * (y : K))
+    (h₂ : ((t.sphereWitness j₂ : Kˣ) : K) = (t.q : K) ^ n₂ * (y : K)) : j₁ = j₂ := by
+  have hq1 : ‖(t.q : K)‖ < 1 := t.norm_lt_one
+  have hq0 : 0 < ‖(t.q : K)‖ := t.norm_q_pos
+  have hnorm₁ : ‖((t.sphereWitness j₁ : Kˣ) : K)‖ = 1 := by
+    rw [t.sphereWitness_val]; exact t.norm_one_add_qpow j₁
+  have hnorm₂ : ‖((t.sphereWitness j₂ : Kˣ) : K)‖ = 1 := by
+    rw [t.sphereWitness_val]; exact t.norm_one_add_qpow j₂
+  have hy0 : (0 : ℝ) < ‖(y : K)‖ := norm_pos_iff.mpr (Units.ne_zero y)
+  have e₁ := congrArg norm h₁
+  have e₂ := congrArg norm h₂
+  rw [norm_mul, norm_zpow, hnorm₁] at e₁
+  rw [norm_mul, norm_zpow, hnorm₂] at e₂
+  have heq : ‖(t.q : K)‖ ^ n₁ = ‖(t.q : K)‖ ^ n₂ :=
+    mul_right_cancel₀ hy0.ne' (e₁.symm.trans e₂)
+  have hnn : n₁ = n₂ := by
+    by_contra hne'
+    rcases lt_or_gt_of_ne hne' with hlt | hgt
+    · exact lt_irrefl _ (heq ▸ zpow_lt_zpow_right_of_lt_one₀ hq0 hq1 hlt)
+    · exact lt_irrefl _ (heq ▸ zpow_lt_zpow_right_of_lt_one₀ hq0 hq1 hgt)
+  rw [hnn] at h₁
+  exact t.sphereWitness_injective (Units.ext (h₁.trans h₂.symm))
+
+omit [CompleteSpace K] in
+/-- At most one norm-one witness has its **square** on any given `qᶻ`-class (residue
+characteristic away from `2`). -/
+private lemma witness_sq_class_unique (h2 : ‖(2 : K)‖ = 1) {y : Kˣ} {j₁ j₂ : ℕ} {n₁ n₂ : ℤ}
+    (h₁ : ((t.sphereWitness j₁ : Kˣ) : K) ^ 2 = (t.q : K) ^ n₁ * (y : K))
+    (h₂ : ((t.sphereWitness j₂ : Kˣ) : K) ^ 2 = (t.q : K) ^ n₂ * (y : K)) : j₁ = j₂ := by
+  have hq1 : ‖(t.q : K)‖ < 1 := t.norm_lt_one
+  have hq0 : 0 < ‖(t.q : K)‖ := t.norm_q_pos
+  have hnorm₁ : ‖((t.sphereWitness j₁ : Kˣ) : K)‖ = 1 := by
+    rw [t.sphereWitness_val]; exact t.norm_one_add_qpow j₁
+  have hnorm₂ : ‖((t.sphereWitness j₂ : Kˣ) : K)‖ = 1 := by
+    rw [t.sphereWitness_val]; exact t.norm_one_add_qpow j₂
+  have hy0 : (0 : ℝ) < ‖(y : K)‖ := norm_pos_iff.mpr (Units.ne_zero y)
+  have e₁ := congrArg norm h₁
+  have e₂ := congrArg norm h₂
+  rw [norm_mul, norm_zpow, norm_pow, hnorm₁, one_pow] at e₁
+  rw [norm_mul, norm_zpow, norm_pow, hnorm₂, one_pow] at e₂
+  have heq : ‖(t.q : K)‖ ^ n₁ = ‖(t.q : K)‖ ^ n₂ :=
+    mul_right_cancel₀ hy0.ne' (e₁.symm.trans e₂)
+  have hnn : n₁ = n₂ := by
+    by_contra hne'
+    rcases lt_or_gt_of_ne hne' with hlt | hgt
+    · exact lt_irrefl _ (heq ▸ zpow_lt_zpow_right_of_lt_one₀ hq0 hq1 hlt)
+    · exact lt_irrefl _ (heq ▸ zpow_lt_zpow_right_of_lt_one₀ hq0 hq1 hgt)
+  rw [hnn] at h₁
+  have hsq : ((t.sphereWitness j₁ : Kˣ) : K) ^ 2 = ((t.sphereWitness j₂ : Kˣ) : K) ^ 2 :=
+    h₁.trans h₂.symm
+  have hfac : (((t.sphereWitness j₁ : Kˣ) : K) - ((t.sphereWitness j₂ : Kˣ) : K))
+      * (((t.sphereWitness j₁ : Kˣ) : K) + ((t.sphereWitness j₂ : Kˣ) : K)) = 0 := by
+    linear_combination hsq
+  rcases mul_eq_zero.mp hfac with h | h
+  · exact t.sphereWitness_injective (Units.ext (sub_eq_zero.mp h))
+  · exfalso
+    have hsum : ((t.sphereWitness j₁ : Kˣ) : K) + ((t.sphereWitness j₂ : Kˣ) : K)
+        = 2 + ((t.q : K) ^ (j₁ + 1) + (t.q : K) ^ (j₂ + 1)) := by
+      rw [t.sphereWitness_val, t.sphereWitness_val]
+      ring
+    have hqsmall : ‖(t.q : K) ^ (j₁ + 1) + (t.q : K) ^ (j₂ + 1)‖ < 1 := by
+      refine lt_of_le_of_lt (IsUltrametricDist.norm_add_le_max _ _) ?_
+      rw [max_lt_iff]
+      constructor <;>
+        · rw [norm_pow]
+          exact pow_lt_one₀ (norm_nonneg _) t.norm_lt_one (Nat.succ_ne_zero _)
+    have hne : ‖(2 : K)‖ ≠ ‖(t.q : K) ^ (j₁ + 1) + (t.q : K) ^ (j₂ + 1)‖ := by
+      rw [h2]
+      exact fun hcon => lt_irrefl _ (hcon ▸ hqsmall)
+    have hnorm : ‖(2 : K) + ((t.q : K) ^ (j₁ + 1) + (t.q : K) ^ (j₂ + 1))‖ = 1 := by
+      rw [IsUltrametricDist.norm_add_eq_max_of_norm_ne_norm hne, h2]
+      exact max_eq_left (le_of_lt (h2 ▸ hqsmall))
+    rw [hsum] at h
+    have hc := congrArg norm h
+    rw [hnorm, norm_zero] at hc
+    exact one_ne_zero hc
+
+omit [CompleteSpace K] in
+/-- **Avoidance with square conditions** (residue characteristic away from `2`): some unit
+avoids finitely many prescribed `qᶻ`-classes while its square also avoids finitely many
+prescribed classes. Each condition disqualifies at most one norm-one witness `1 + qʲ⁺¹`. -/
+theorem exists_unit_avoiding_sq (h2 : ‖(2 : K)‖ = 1) (S T : Finset Kˣ) :
+    ∃ s : Kˣ, (∀ y ∈ S, ∀ n : ℤ, (s : K) ≠ (t.q : K) ^ n * (y : K)) ∧
+      ∀ y ∈ T, ∀ n : ℤ, ((s : K)) ^ 2 ≠ (t.q : K) ^ n * (y : K) := by
+  classical
+  by_contra hcontra
+  rw [not_exists] at hcontra
+  have hchoice : ∀ j : ℕ,
+      (∃ y ∈ S, ∃ n : ℤ, ((t.sphereWitness j : Kˣ) : K) = (t.q : K) ^ n * (y : K))
+        ∨ ∃ y ∈ T, ∃ n : ℤ, ((t.sphereWitness j : Kˣ) : K) ^ 2 = (t.q : K) ^ n * (y : K) := by
+    intro j
+    by_contra hj
+    rw [not_or] at hj
+    refine hcontra (t.sphereWitness j) ⟨?_, ?_⟩
+    · intro y hy n hn
+      exact hj.1 ⟨y, hy, n, hn⟩
+    · intro y hy n hn
+      exact hj.2 ⟨y, hy, n, hn⟩
+  set F : ℕ → Kˣ × Bool := fun j =>
+    if h : ∃ y ∈ S, ∃ n : ℤ, ((t.sphereWitness j : Kˣ) : K) = (t.q : K) ^ n * (y : K) then
+      (h.choose, true)
+    else (((hchoice j).resolve_left h).choose, false)
+    with hF
+  have hinjF : Function.Injective F := by
+    intro j₁ j₂ heq
+    by_cases h₁ : ∃ y ∈ S, ∃ n : ℤ,
+        ((t.sphereWitness j₁ : Kˣ) : K) = (t.q : K) ^ n * (y : K) <;>
+      by_cases h₂ : ∃ y ∈ S, ∃ n : ℤ,
+        ((t.sphereWitness j₂ : Kˣ) : K) = (t.q : K) ^ n * (y : K)
+    · rw [hF] at heq
+      simp only [dif_pos h₁, dif_pos h₂, Prod.mk.injEq] at heq
+      obtain ⟨_, n₁, hn₁⟩ := h₁.choose_spec
+      obtain ⟨_, n₂, hn₂⟩ := h₂.choose_spec
+      rw [heq.1] at hn₁
+      exact t.witness_class_unique hn₁ hn₂
+    · rw [hF] at heq
+      simp only [dif_pos h₁, dif_neg h₂, Prod.mk.injEq] at heq
+      exact absurd heq.2 (by simp)
+    · rw [hF] at heq
+      simp only [dif_neg h₁, dif_pos h₂, Prod.mk.injEq] at heq
+      exact absurd heq.2 (by simp)
+    · rw [hF] at heq
+      simp only [dif_neg h₁, dif_neg h₂, Prod.mk.injEq] at heq
+      obtain ⟨_, n₁, hn₁⟩ := ((hchoice j₁).resolve_left h₁).choose_spec
+      obtain ⟨_, n₂, hn₂⟩ := ((hchoice j₂).resolve_left h₂).choose_spec
+      rw [heq.1] at hn₁
+      exact t.witness_sq_class_unique h2 hn₁ hn₂
+  have hrange : Set.range F ⊆ ((S : Set Kˣ) ∪ (T : Set Kˣ)) ×ˢ (Set.univ : Set Bool) := by
+    rintro _ ⟨j, rfl⟩
+    by_cases h₁ : ∃ y ∈ S, ∃ n : ℤ,
+        ((t.sphereWitness j : Kˣ) : K) = (t.q : K) ^ n * (y : K)
+    · rw [hF]
+      simp only [dif_pos h₁]
+      exact ⟨Or.inl h₁.choose_spec.1, trivial⟩
+    · rw [hF]
+      simp only [dif_neg h₁]
+      exact ⟨Or.inr ((hchoice j).resolve_left h₁).choose_spec.1, trivial⟩
+  have hfin : (((S : Set Kˣ) ∪ (T : Set Kˣ)) ×ˢ (Set.univ : Set Bool)).Finite :=
+    ((S.finite_toSet.union T.finite_toSet).prod (Set.finite_univ))
+  exact Set.infinite_range_of_injective hinjF (hfin.subset hrange)
+
 end Block
 
 end TateParameter
