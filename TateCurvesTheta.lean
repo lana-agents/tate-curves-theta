@@ -39,6 +39,7 @@ import TateCurvesTheta.Theta.LaurentUnitSphere
 import TateCurvesTheta.Theta.Normalization
 import TateCurvesTheta.Theta.Periodicity
 import TateCurvesTheta.Theta.Product
+import TateCurvesTheta.Theta.PuncturedProduct
 import TateCurvesTheta.Theta.QBinomial
 import TateCurvesTheta.Theta.RatioAnnulus
 import TateCurvesTheta.Theta.SeriesZero

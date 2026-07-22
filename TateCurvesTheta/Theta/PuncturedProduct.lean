@@ -71,7 +71,8 @@ the self-convolution of the explicit theta coefficients `n ↦ (-1)ⁿ q^{e n}`.
 
 * `TateParameter.one_add_qpow_mul_pFactorSeries` : the defining identity
   `(1 + q^p c) · ∑ₖ pFactorCoeff p k · cᵏ = thetaProdFactor c`.
-* `TateParameter.summable_XThetaSqCoeff_mul_zpow`, `TateParameter.summable_YThetaCubeCoeff_mul_zpow` :
+* `TateParameter.summable_XThetaSqCoeff_mul_zpow` and the `Y`-analogue
+  `TateParameter.summable_YThetaCubeCoeff_mul_zpow` :
   the coefficient families converge at **every** unit `u`.
 * `TateParameter.hasSum_XThetaSqCoeff`, `TateParameter.hasSum_YThetaCubeCoeff` : off the orbit
   `qᶻ` they sum to `X u · theta (-u)²` resp. `Y u · theta (-u)³`.
@@ -118,11 +119,12 @@ lemma EntireBound.summable_one {A : ℤ → ℝ} (hA : EntireBound A) : Summable
 /-- Each convolution slice `m ↦ A (ℓ - m) · B m` of two entire bound families is summable. -/
 lemma summable_rconv_slice {A B : ℤ → ℝ} (hA : EntireBound A) (hB : EntireBound B) (ℓ : ℤ) :
     Summable fun m : ℤ => A (ℓ - m) * B m := by
-  have hprod := hA.summable_one.mul_of_nonneg hB.summable_one
-    (fun n => hA.nonneg n) (fun m => hB.nonneg m)
+  have hprod : Summable fun p : ℤ × ℤ => A p.1 * B p.2 :=
+    hA.summable_one.mul_of_nonneg hB.summable_one (fun n => hA.nonneg n) fun m => hB.nonneg m
   have hinj : Function.Injective (fun m : ℤ => ((ℓ - m, m) : ℤ × ℤ)) := fun a b hab => by
     simpa using congrArg Prod.snd hab
-  exact hprod.comp_injective hinj
+  have h := hprod.comp_injective hinj
+  exact h.congr fun m => rfl
 
 /-- The shear `(ℓ, m) ↦ (ℓ - m, m)` on `ℤ²`, used to Fubini convolutions. -/
 private def shearZ : ℤ × ℤ ≃ ℤ × ℤ where
@@ -145,7 +147,7 @@ lemma EntireBound.rconv {A B : ℤ → ℝ} (hA : EntireBound A) (hB : EntireBou
       have h := (shearZ.summable_iff
         (f := fun p : ℤ × ℤ => (A p.1 * r ^ p.1) * (B p.2 * r ^ p.2))).mpr hprod
       refine h.congr fun p => ?_
-      show (A (p.1 - p.2) * r ^ (p.1 - p.2)) * (B p.2 * r ^ p.2)
+      change (A (p.1 - p.2) * r ^ (p.1 - p.2)) * (B p.2 * r ^ p.2)
           = A (p.1 - p.2) * B p.2 * r ^ p.1
       rw [mul_mul_mul_comm, ← zpow_add₀ (ne_of_gt hr), sub_add_cancel]
     have hfib : ∀ ℓ : ℤ, HasSum (fun m : ℤ => A (ℓ - m) * B m * r ^ ℓ)
@@ -176,6 +178,7 @@ lemma EntireBound.add {A B : ℤ → ℝ} (hA : EntireBound A) (hB : EntireBound
   · intro r hr
     exact ((hA.summable r hr).add (hB.summable r hr)).congr fun m => (add_mul _ _ _).symm
 
+omit [CompleteSpace K] in
 /-- **Domination of the Laurent convolution.** If `α, β` are termwise dominated by entire
 bound families `A, B`, then `lconv α β` is termwise dominated by `rconv A B`. This is the
 ultrametric `‖tsum‖ ≤ ⨆ ‖·‖` bound followed by `A (ℓ-m) · B m ≤ rconv A B ℓ`. -/
@@ -199,6 +202,7 @@ private lemma summable_pow_natAbs {c : ℝ} (h0 : 0 ≤ c) (h1 : c < 1) :
     have hk : ((-(↑k + 1) : ℤ)).natAbs = k + 1 := by omega
     rw [hk, pow_succ]
 
+omit [CompleteSpace K] in
 /-- Extend a `ℕ`-supported `HasSum` to `ℤ` (vanishing on negative indices). -/
 private lemma hasSum_int_nonneg_support {f : ℤ → K} {S : K}
     (h0 : ∀ n : ℤ, n < 0 → f n = 0) (h : HasSum (fun k : ℕ => f (k : ℤ)) S) :
@@ -210,6 +214,7 @@ private lemma hasSum_int_nonneg_support {f : ℤ → K} {S : K}
     exact hasSum_zero
   simpa using h.of_nat_of_neg_add_one hneg
 
+omit [CompleteSpace K] in
 /-- Extend a `(-ℕ)`-supported `HasSum` to `ℤ` (vanishing on positive indices). -/
 private lemma hasSum_int_nonpos_support {f : ℤ → K} {S : K}
     (h0 : ∀ n : ℤ, 0 < n → f n = 0) (h : HasSum (fun k : ℕ => f (-(k : ℤ))) S) :
@@ -265,10 +270,9 @@ private lemma triangle_natAbs_le_thetaExp (m : ℤ) :
         _ = _ := hcast
   have h3 : 2 * thetaExp m = m * (m + 1) := two_mul_thetaExp m
   have h4 : (m.natAbs : ℤ) * (m.natAbs : ℤ) = m * m := by
-    have := Int.natAbs_mul_self (a := m)
-    push_cast at this
-    exact this
-  have h5 : -(m.natAbs : ℤ) ≤ m := Int.neg_natAbs_le m
+    rw [← Int.natCast_mul]
+    exact Int.natAbs_mul_self
+  have h5 : -(m.natAbs : ℤ) ≤ m := by omega
   nlinarith [h2, h3, h4, h5]
 
 namespace TateParameter
@@ -285,19 +289,25 @@ factor `(1 + c)` multiplies the `p`-punctured series evaluated at `q·c`, giving
 `pFactorCoeff (p+1) (k+1) = q^{k+1}·pFactorCoeff p (k+1) + qᵏ·pFactorCoeff p k`. -/
 noncomputable def pFactorCoeff : ℕ → ℕ → K
   | 0, k => factorCoeff t k * (t.q : K) ^ k
-  | p + 1, 0 => pFactorCoeff t p 0
+  | p + 1, 0 => pFactorCoeff p 0
   | p + 1, k + 1 =>
-      (t.q : K) ^ (k + 1) * pFactorCoeff t p (k + 1) + (t.q : K) ^ k * pFactorCoeff t p k
+      (t.q : K) ^ (k + 1) * pFactorCoeff p (k + 1) + (t.q : K) ^ k * pFactorCoeff p k
 
-lemma pFactorCoeff_zero (k : ℕ) : t.pFactorCoeff 0 k = factorCoeff t k * (t.q : K) ^ k := rfl
+omit [CompleteSpace K] [IsUltrametricDist K] in
+lemma pFactorCoeff_zero (k : ℕ) : t.pFactorCoeff 0 k = factorCoeff t k * (t.q : K) ^ k := by
+  simp [pFactorCoeff]
 
-lemma pFactorCoeff_succ_zero (p : ℕ) : t.pFactorCoeff (p + 1) 0 = t.pFactorCoeff p 0 := rfl
+omit [CompleteSpace K] [IsUltrametricDist K] in
+lemma pFactorCoeff_succ_zero (p : ℕ) : t.pFactorCoeff (p + 1) 0 = t.pFactorCoeff p 0 := by
+  simp [pFactorCoeff]
 
+omit [CompleteSpace K] [IsUltrametricDist K] in
 lemma pFactorCoeff_succ_succ (p k : ℕ) :
     t.pFactorCoeff (p + 1) (k + 1)
-      = (t.q : K) ^ (k + 1) * t.pFactorCoeff p (k + 1) + (t.q : K) ^ k * t.pFactorCoeff p k :=
-  rfl
+      = (t.q : K) ^ (k + 1) * t.pFactorCoeff p (k + 1) + (t.q : K) ^ k * t.pFactorCoeff p k := by
+  simp [pFactorCoeff]
 
+omit [CompleteSpace K] in
 /-- **Uniform norm bound for the punctured coefficients**: `‖pFactorCoeff p k‖ ≤ ‖q‖^{k(k-1)/2}`,
 independently of the puncture `p`. -/
 lemma norm_pFactorCoeff_le (p k : ℕ) :
@@ -324,6 +334,7 @@ lemma norm_pFactorCoeff_le (p k : ℕ) :
           _ = ‖(t.q : K)‖ ^ ((k + 1) * (k + 1 - 1) / 2) := by
               rw [← pow_add, triangle_succ, Nat.add_comm]
 
+omit [CompleteSpace K] [IsUltrametricDist K] in
 /-- The master real series: `∑ₖ ‖q‖^{k(k-1)/2} · rᵏ` converges for every `r ≥ 0`. -/
 private lemma summable_norm_q_triangle_mul (r : ℝ) (hr : 0 ≤ r) :
     Summable fun k : ℕ => ‖(t.q : K)‖ ^ (k * (k - 1) / 2) * r ^ k := by
@@ -393,7 +404,8 @@ lemma one_add_qpow_mul_pFactorSeries (p : ℕ) (c : K) :
   | succ p ih =>
     rw [pFactorSeries_succ]
     have hswap : (1 + (t.q : K) ^ (p + 1) * c) * ((1 + c) * t.pFactorSeries p ((t.q : K) * c))
-        = (1 + c) * ((1 + (t.q : K) ^ p * ((t.q : K) * c)) * t.pFactorSeries p ((t.q : K) * c)) := by
+        = (1 + c)
+          * ((1 + (t.q : K) ^ p * ((t.q : K) * c)) * t.pFactorSeries p ((t.q : K) * c)) := by
       ring
     rw [hswap, ih ((t.q : K) * c), ← thetaProdFactor_eq]
 
@@ -403,10 +415,11 @@ lemma one_add_qpow_mul_pFactorSeries (p : ℕ) (c : K) :
 coefficient families in this file. -/
 private def triangleBound : ℤ → ℝ := fun m => ‖(t.q : K)‖ ^ (m.natAbs * (m.natAbs - 1) / 2)
 
+omit [CompleteSpace K] [IsUltrametricDist K] in
 private lemma entireBound_triangleBound : EntireBound t.triangleBound := by
   constructor
   · intro m
-    positivity
+    exact pow_nonneg (norm_nonneg _) _
   · intro r hr
     apply Summable.of_nat_of_neg_add_one
     · exact (t.summable_norm_q_triangle_mul r hr.le).congr fun k => by
@@ -437,6 +450,7 @@ private lemma hasSum_thetaNegCoeff (u : Kˣ) :
     ring
   rwa [hfun] at h
 
+omit [CompleteSpace K] [IsUltrametricDist K] in
 private lemma norm_thetaNegCoeff_le (m : ℤ) : ‖t.thetaNegCoeff m‖ ≤ t.triangleBound m := by
   rw [thetaNegCoeff, norm_mul, norm_zpow, norm_zpow, norm_neg, norm_one, one_zpow, one_mul]
   have he : (0 : ℤ) ≤ thetaExp m := thetaExp_nonneg m
@@ -515,6 +529,7 @@ private lemma hasSum_bFam (p : ℕ) (u : Kˣ) :
   rw [funext hfun]
   exact (t.summable_pFactorCoeff_mul_pow p _).hasSum
 
+omit [CompleteSpace K] in
 private lemma norm_hFam_le (k : ℤ) : ‖t.hFam k‖ ≤ t.triangleBound k := by
   rw [hFam]
   split_ifs with hk
@@ -524,6 +539,7 @@ private lemma norm_hFam_le (k : ℤ) : ‖t.hFam k‖ ≤ t.triangleBound k := b
   · rw [norm_zero, triangleBound]
     positivity
 
+omit [CompleteSpace K] in
 private lemma norm_gFam_le (m : ℤ) : ‖t.gFam m‖ ≤ t.triangleBound m := by
   rw [gFam]
   split_ifs with hm
@@ -532,6 +548,7 @@ private lemma norm_gFam_le (m : ℤ) : ‖t.gFam m‖ ≤ t.triangleBound m := b
   · rw [norm_zero, triangleBound]
     positivity
 
+omit [CompleteSpace K] in
 private lemma norm_aFam_le (p : ℕ) (k : ℤ) : ‖t.aFam p k‖ ≤ t.triangleBound k := by
   rw [aFam]
   split_ifs with hk
@@ -541,6 +558,7 @@ private lemma norm_aFam_le (p : ℕ) (k : ℤ) : ‖t.aFam p k‖ ≤ t.triangle
   · rw [norm_zero, triangleBound]
     positivity
 
+omit [CompleteSpace K] in
 private lemma norm_bFam_le (p : ℕ) (m : ℤ) : ‖t.bFam p m‖ ≤ t.triangleBound m := by
   rw [bFam]
   split_ifs with hm
@@ -639,18 +657,23 @@ private def bound4 : ℤ → ℝ := rconv t.bound2 t.bound2
 private def bound3 : ℤ → ℝ := rconv t.bound2 t.triangleBound
 private def bound6 : ℤ → ℝ := rconv t.bound3 t.bound3
 
+omit [CompleteSpace K] [IsUltrametricDist K] in
 private lemma entireBound_bound2 : EntireBound t.bound2 :=
   t.entireBound_triangleBound.rconv t.entireBound_triangleBound
 
+omit [CompleteSpace K] [IsUltrametricDist K] in
 private lemma entireBound_bound4 : EntireBound t.bound4 :=
   t.entireBound_bound2.rconv t.entireBound_bound2
 
+omit [CompleteSpace K] [IsUltrametricDist K] in
 private lemma entireBound_bound3 : EntireBound t.bound3 :=
   t.entireBound_bound2.rconv t.entireBound_triangleBound
 
+omit [CompleteSpace K] [IsUltrametricDist K] in
 private lemma entireBound_bound6 : EntireBound t.bound6 :=
   t.entireBound_bound3.rconv t.entireBound_bound3
 
+omit [CompleteSpace K] in
 private lemma norm_convXPos_le (p : ℕ) (ℓ : ℤ) : ‖t.convXPos p ℓ‖ ≤ t.bound4 ℓ :=
   norm_lconv_le t.entireBound_bound2 t.entireBound_bound2
     (norm_lconv_le t.entireBound_triangleBound t.entireBound_triangleBound
@@ -658,6 +681,7 @@ private lemma norm_convXPos_le (p : ℕ) (ℓ : ℤ) : ‖t.convXPos p ℓ‖ �
     (norm_lconv_le t.entireBound_triangleBound t.entireBound_triangleBound
       t.norm_gFam_le t.norm_gFam_le) ℓ
 
+omit [CompleteSpace K] in
 private lemma norm_convXNeg_le (p : ℕ) (ℓ : ℤ) : ‖t.convXNeg p ℓ‖ ≤ t.bound4 ℓ :=
   norm_lconv_le t.entireBound_bound2 t.entireBound_bound2
     (norm_lconv_le t.entireBound_triangleBound t.entireBound_triangleBound
@@ -665,6 +689,7 @@ private lemma norm_convXNeg_le (p : ℕ) (ℓ : ℤ) : ‖t.convXNeg p ℓ‖ �
     (norm_lconv_le t.entireBound_triangleBound t.entireBound_triangleBound
       (t.norm_bFam_le p) (t.norm_bFam_le p)) ℓ
 
+omit [CompleteSpace K] in
 private lemma norm_convYPos_le (p : ℕ) (ℓ : ℤ) : ‖t.convYPos p ℓ‖ ≤ t.bound6 ℓ :=
   norm_lconv_le t.entireBound_bound3 t.entireBound_bound3
     (norm_lconv_le t.entireBound_bound2 t.entireBound_triangleBound
@@ -676,6 +701,7 @@ private lemma norm_convYPos_le (p : ℕ) (ℓ : ℤ) : ‖t.convYPos p ℓ‖ �
         t.norm_gFam_le t.norm_gFam_le)
       t.norm_gFam_le) ℓ
 
+omit [CompleteSpace K] in
 private lemma norm_convYNeg_le (p : ℕ) (ℓ : ℤ) : ‖t.convYNeg p ℓ‖ ≤ t.bound6 ℓ :=
   norm_lconv_le t.entireBound_bound3 t.entireBound_bound3
     (norm_lconv_le t.entireBound_bound2 t.entireBound_triangleBound
@@ -703,10 +729,12 @@ private def yFam (n : ℤ) : ℤ → K := fun m =>
   else
     -((t.q : K) ^ (-n) * t.thetaProdFactor (-(t.q : K)) ^ 3 * t.convYNeg (-n).toNat (m + 1))
 
+omit [CompleteSpace K] [IsUltrametricDist K] in
 private lemma norm_qzpow_natAbs {n : ℤ} (hn : 0 ≤ n) :
     ‖(t.q : K) ^ n‖ = ‖(t.q : K)‖ ^ n.natAbs := by
   rw [norm_zpow, ← zpow_natCast ‖(t.q : K)‖ n.natAbs, Int.natAbs_of_nonneg hn]
 
+omit [CompleteSpace K] [IsUltrametricDist K] in
 private lemma norm_qzpow_le_one {n : ℤ} (hn : 0 ≤ n) : ‖(t.q : K) ^ n‖ ≤ 1 := by
   rw [t.norm_qzpow_natAbs hn]
   exact pow_le_one₀ (norm_nonneg _) t.norm_lt_one.le
@@ -923,7 +951,6 @@ private lemma Xterm_mul_theta_neg_sq_pos (u : Kˣ)
     exact t.one_sub_qzpow_mul_ne_zero hu n
   rw [Xterm_apply, hθ, ← hH, hqn]
   field_simp
-  ring
 
 private lemma Xterm_mul_theta_neg_sq_neg (u : Kˣ)
     (hu : ∀ j : ℤ, (t.q : K) ^ j * (u : K) ≠ 1) {n : ℤ} {p : ℕ} (hp : (p : ℤ) = -n) :
@@ -944,8 +971,13 @@ private lemma Xterm_mul_theta_neg_sq_neg (u : Kˣ)
     rw [← hqn]
     exact t.one_sub_qzpow_mul_ne_zero hu n
   have hq0 : (t.q : K) ^ (p : ℕ) ≠ 0 := pow_ne_zero _ t.q.ne_zero
+  have hne' : (t.q : K) ^ (p : ℕ) - (u : K) ≠ 0 := by
+    intro h0
+    apply hne
+    have hx : (t.q : K) ^ (p : ℕ) = (u : K) := sub_eq_zero.mp h0
+    rw [← hx, inv_mul_cancel₀ hq0, sub_self]
   rw [Xterm_apply, hθ, ← hG, hqn]
-  field_simp
+  field_simp [hne']
   ring
 
 private lemma Yterm_mul_theta_neg_cube_pos (u : Kˣ)
@@ -968,7 +1000,6 @@ private lemma Yterm_mul_theta_neg_cube_pos (u : Kˣ)
     exact t.one_sub_qzpow_mul_ne_zero hu n
   rw [Yterm_apply, hθ, ← hH, hqn]
   field_simp
-  ring
 
 private lemma Yterm_mul_theta_neg_cube_neg (u : Kˣ)
     (hu : ∀ j : ℤ, (t.q : K) ^ j * (u : K) ≠ 1) {n : ℤ} {p : ℕ} (hp : (p : ℤ) = -n) :
@@ -989,8 +1020,13 @@ private lemma Yterm_mul_theta_neg_cube_neg (u : Kˣ)
     rw [← hqn]
     exact t.one_sub_qzpow_mul_ne_zero hu n
   have hq0 : (t.q : K) ^ (p : ℕ) ≠ 0 := pow_ne_zero _ t.q.ne_zero
+  have hne' : (t.q : K) ^ (p : ℕ) - (u : K) ≠ 0 := by
+    intro h0
+    apply hne
+    have hx : (t.q : K) ^ (p : ℕ) = (u : K) := sub_eq_zero.mp h0
+    rw [← hx, inv_mul_cancel₀ hq0, sub_self]
   rw [Yterm_apply, hθ, ← hG, hqn]
-  field_simp
+  field_simp [hne']
   ring
 
 /-! ### Per-`n` `HasSum` with the analytic values -/
@@ -1001,24 +1037,28 @@ private lemma hasSum_xFam (u : Kˣ) (hu : ∀ j : ℤ, (t.q : K) ^ j * (u : K) �
   · have hp : (((n - 1).toNat : ℤ)) + 1 = n := by omega
     have h := t.hasSum_xFam_pos (n - 1).toNat u
     have hqn : (t.q : K) ^ n = (t.q : K) ^ ((n - 1).toNat + 1) := by
-      rw [← hp, show (((n - 1).toNat : ℤ) + 1) = (((n - 1).toNat + 1 : ℕ) : ℤ) by
-        push_cast; ring, zpow_natCast]
+      conv_lhs => rw [← hp]
+      rw [show (((n - 1).toNat : ℤ) + 1) = (((n - 1).toNat + 1 : ℕ) : ℤ) by push_cast; ring,
+        zpow_natCast]
     have hfun : (fun m : ℤ => ((t.q : K) ^ ((n - 1).toNat + 1)
         * t.thetaProdFactor (-(t.q : K)) ^ 2 * t.convXPos (n - 1).toNat (m - 1)) * (u : K) ^ m)
         = fun m : ℤ => t.xFam n m * (u : K) ^ m := by
       funext m
-      simp only [xFam, if_pos hn, ← hqn]
+      simp only [xFam, if_pos hn]
+      rw [hqn]
     rw [hfun] at h
     rwa [← t.Xterm_mul_theta_neg_sq_pos u hu hp] at h
   · have hp : (((-n).toNat : ℤ)) = -n := by omega
     have h := t.hasSum_xFam_neg (-n).toNat u
     have hqn : (t.q : K) ^ (-n) = (t.q : K) ^ ((-n).toNat : ℕ) := by
-      rw [← hp, zpow_natCast]
+      conv_lhs => rw [← hp]
+      rw [zpow_natCast]
     have hfun : (fun m : ℤ => ((t.q : K) ^ ((-n).toNat : ℕ)
         * t.thetaProdFactor (-(t.q : K)) ^ 2 * t.convXNeg (-n).toNat (m + 1)) * (u : K) ^ m)
         = fun m : ℤ => t.xFam n m * (u : K) ^ m := by
       funext m
-      simp only [xFam, if_neg hn, ← hqn]
+      simp only [xFam, if_neg hn]
+      rw [hqn]
     rw [hfun] at h
     rwa [← t.Xterm_mul_theta_neg_sq_neg u hu hp] at h
 
@@ -1028,24 +1068,28 @@ private lemma hasSum_yFam (u : Kˣ) (hu : ∀ j : ℤ, (t.q : K) ^ j * (u : K) �
   · have hp : (((n - 1).toNat : ℤ)) + 1 = n := by omega
     have h := t.hasSum_yFam_pos (n - 1).toNat u
     have hqn : (t.q : K) ^ n = (t.q : K) ^ ((n - 1).toNat + 1) := by
-      rw [← hp, show (((n - 1).toNat : ℤ) + 1) = (((n - 1).toNat + 1 : ℕ) : ℤ) by
-        push_cast; ring, zpow_natCast]
+      conv_lhs => rw [← hp]
+      rw [show (((n - 1).toNat : ℤ) + 1) = (((n - 1).toNat + 1 : ℕ) : ℤ) by push_cast; ring,
+        zpow_natCast]
     have hfun : (fun m : ℤ => (((t.q : K) ^ ((n - 1).toNat + 1)) ^ 2
         * t.thetaProdFactor (-(t.q : K)) ^ 3 * t.convYPos (n - 1).toNat (m - 2)) * (u : K) ^ m)
         = fun m : ℤ => t.yFam n m * (u : K) ^ m := by
       funext m
-      simp only [yFam, if_pos hn, ← hqn]
+      simp only [yFam, if_pos hn]
+      rw [hqn]
     rw [hfun] at h
     rwa [← t.Yterm_mul_theta_neg_cube_pos u hu hp] at h
   · have hp : (((-n).toNat : ℤ)) = -n := by omega
     have h := t.hasSum_yFam_neg (-n).toNat u
     have hqn : (t.q : K) ^ (-n) = (t.q : K) ^ ((-n).toNat : ℕ) := by
-      rw [← hp, zpow_natCast]
+      conv_lhs => rw [← hp]
+      rw [zpow_natCast]
     have hfun : (fun m : ℤ => (-((t.q : K) ^ ((-n).toNat : ℕ)
         * t.thetaProdFactor (-(t.q : K)) ^ 3 * t.convYNeg (-n).toNat (m + 1))) * (u : K) ^ m)
         = fun m : ℤ => t.yFam n m * (u : K) ^ m := by
       funext m
-      simp only [yFam, if_neg hn, ← hqn]
+      simp only [yFam, if_neg hn]
+      rw [hqn]
     rw [hfun] at h
     rwa [← t.Yterm_mul_theta_neg_cube_neg u hu hp] at h
 
@@ -1110,16 +1154,18 @@ private lemma summable_yFam_double (u : Kˣ) :
         rw [mul_assoc]
 
 private lemma summable_xFam_slice (u : Kˣ) (m : ℤ) :
-    Summable fun n : ℤ => t.xFam n m * (u : K) ^ m :=
-  (t.summable_xFam_double u).comp_injective
-    (i := fun n : ℤ => ((n, m) : ℤ × ℤ)) fun a b hab => by
-      simpa using congrArg Prod.fst hab
+    Summable fun n : ℤ => t.xFam n m * (u : K) ^ m := by
+  have hinj : Function.Injective (fun n : ℤ => ((n, m) : ℤ × ℤ)) := fun a b hab => by
+    simpa using congrArg Prod.fst hab
+  have h := (t.summable_xFam_double u).comp_injective hinj
+  exact h.congr fun n => rfl
 
 private lemma summable_yFam_slice (u : Kˣ) (m : ℤ) :
-    Summable fun n : ℤ => t.yFam n m * (u : K) ^ m :=
-  (t.summable_yFam_double u).comp_injective
-    (i := fun n : ℤ => ((n, m) : ℤ × ℤ)) fun a b hab => by
-      simpa using congrArg Prod.fst hab
+    Summable fun n : ℤ => t.yFam n m * (u : K) ^ m := by
+  have hinj : Function.Injective (fun n : ℤ => ((n, m) : ℤ × ℤ)) := fun a b hab => by
+    simpa using congrArg Prod.fst hab
+  have h := (t.summable_yFam_double u).comp_injective hinj
+  exact h.congr fun n => rfl
 
 private lemma hasSum_xFam_marginal (u : Kˣ) :
     HasSum (fun m : ℤ => (∑' n : ℤ, t.xFam n m) * (u : K) ^ m)
