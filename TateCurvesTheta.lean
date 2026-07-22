@@ -3,6 +3,7 @@ import TateCurvesTheta.Analysis.Strassmann
 import TateCurvesTheta.Analysis.StrassmannSphere
 import TateCurvesTheta.Analysis.UltrametricSum
 import TateCurvesTheta.AnalyticQuotient
+import TateCurvesTheta.Arithmetic.DivisorConvolution
 import TateCurvesTheta.Basic
 import TateCurvesTheta.QParameter.BaseChange
 import TateCurvesTheta.QParameter.Basic
@@ -11,12 +12,16 @@ import TateCurvesTheta.TateCurve.CoordinateAnnulusLaurent
 import TateCurvesTheta.TateCurve.CoordinateAnnulusLaurentY
 import TateCurvesTheta.TateCurve.CoordinateExpansion
 import TateCurvesTheta.TateCurve.DefectAnnulusLaurent
+import TateCurvesTheta.TateCurve.DefectVanishing
 import TateCurvesTheta.TateCurve.Discriminant
+import TateCurvesTheta.TateCurve.EisensteinKernels
+import TateCurvesTheta.TateCurve.EisensteinSeries
 import TateCurvesTheta.TateCurve.IntegralModel
 import TateCurvesTheta.TateCurve.Parametrization
 import TateCurvesTheta.TateCurve.PointMap
 import TateCurvesTheta.TateCurve.Quotient
 import TateCurvesTheta.TateCurve.TatePointMem
+import TateCurvesTheta.TateCurve.TatePointOnCurve
 import TateCurvesTheta.TateCurve.Weierstrass
 import TateCurvesTheta.TateCurve.WeierstrassIdentity
 import TateCurvesTheta.Theta.Basic
