@@ -35,6 +35,7 @@ import TateCurvesTheta.Theta.Divisor
 import TateCurvesTheta.Theta.Durfee
 import TateCurvesTheta.Theta.FactorReciprocal
 import TateCurvesTheta.Theta.FactorSeries
+import TateCurvesTheta.Theta.Inversion
 import TateCurvesTheta.Theta.LaurentSphere
 import TateCurvesTheta.Theta.LaurentSphereReduce
 import TateCurvesTheta.Theta.LaurentUnique
