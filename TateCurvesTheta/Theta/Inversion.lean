@@ -70,6 +70,7 @@ lemma thetaTerm_inv_neg_succ (u : Kˣ) (n : ℤ) :
 omit [CompleteSpace K] [IsUltrametricDist K] in
 /-- **The inversion functional equation of the `q`-theta function**:
 `θ(u⁻¹) = u·θ(u)`, by the exponent-preserving index flip `n ↦ -(n+1)`. -/
+@[simp]
 theorem theta_inv (u : Kˣ) : t.theta u⁻¹ = (u : K) * t.theta u := by
   calc t.theta u⁻¹ = ∑' n : ℤ, t.thetaTerm u⁻¹ n := rfl
     _ = ∑' n : ℤ, t.thetaTerm u⁻¹ (-(n + 1)) :=
@@ -89,6 +90,7 @@ lemma thetaOdd_apply (u : Kˣ) : t.thetaOdd u = (u : K) * t.theta (-(u ^ 2)) := 
 
 omit [CompleteSpace K] [IsUltrametricDist K] in
 /-- **Oddness of the odd theta function**: `θ̈(u⁻¹) = -θ̈(u)`. -/
+@[simp]
 theorem thetaOdd_inv (u : Kˣ) : t.thetaOdd u⁻¹ = -t.thetaOdd u := by
   have hu : (u : K) ≠ 0 := Units.ne_zero u
   have hUnit : -(u⁻¹ ^ 2) = (-(u ^ 2))⁻¹ := Units.ext (by
