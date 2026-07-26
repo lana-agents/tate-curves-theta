@@ -8,6 +8,7 @@ import TateCurvesTheta.Basic
 import TateCurvesTheta.QParameter.BaseChange
 import TateCurvesTheta.QParameter.Basic
 import TateCurvesTheta.QParameter.PrimeToOrder
+import TateCurvesTheta.TateCurve.AbelStep
 import TateCurvesTheta.TateCurve.AdditionLaw
 import TateCurvesTheta.TateCurve.CoordinateAnnulusLaurent
 import TateCurvesTheta.TateCurve.CoordinateAnnulusLaurentY
@@ -20,6 +21,7 @@ import TateCurvesTheta.TateCurve.Discriminant
 import TateCurvesTheta.TateCurve.EisensteinKernels
 import TateCurvesTheta.TateCurve.EisensteinSeries
 import TateCurvesTheta.TateCurve.IntegralModel
+import TateCurvesTheta.TateCurve.LargePointParametrization
 import TateCurvesTheta.TateCurve.Parametrization
 import TateCurvesTheta.TateCurve.PointMap
 import TateCurvesTheta.TateCurve.Quotient
