@@ -181,65 +181,85 @@ lemma tateCurve_Δ_eq :
   simp only [WeierstrassCurve.Δ, t.tateCurve_b₂, t.tateCurve_b₄, t.tateCurve_b₆, t.tateCurve_b₈]
   ring
 
-/-- **Nonvanishing of the discriminant.** Over a complete nonarchimedean field (residue
-characteristic `≠ 2, 3`), `Δ(E_q) ≠ 0`. The proof shows `‖Δ(E_q) - q‖ ≤ ‖q‖² < ‖q‖`, so the
-ultrametric isosceles law forces `‖Δ(E_q)‖ = ‖q‖ > 0`. -/
-theorem tateCurve_Δ_ne_zero (h12 : ‖(12 : K)‖ = 1) : t.tateCurve.Δ ≠ 0 := by
+/-- **Leading-term estimate for the discriminant**: `‖Δ(E_q) - q‖ ≤ ‖q‖²` — the
+discriminant is `q` to leading order (the `q`-expansion `Δ = q - 24q² + …`). -/
+lemma norm_tateCurve_Δ_sub_q_le (h12 : ‖(12 : K)‖ = 1) :
+    ‖t.tateCurve.Δ - (t.q : K)‖ ≤ ‖(t.q : K)‖ ^ 2 := by
   have hΔ := t.tateCurve_Δ_eq
   -- `Δ - q` is a sum of five terms each of norm `≤ ‖q‖²`.
-  have hDnorm : ‖t.tateCurve.Δ - (t.q : K)‖ ≤ ‖(t.q : K)‖ ^ 2 := by
-    have hrw : t.tateCurve.Δ - (t.q : K)
-        = -(t.a₆ + (t.q : K)) + t.a₄ ^ 2 + (-64) * t.a₄ ^ 3 + (-432) * t.a₆ ^ 2
-            + 72 * t.a₄ * t.a₆ := by
-      rw [hΔ]; ring
-    rw [hrw]
-    have b1 : ‖-(t.a₆ + (t.q : K))‖ ≤ ‖(t.q : K)‖ ^ 2 := by
-      rw [norm_neg]; exact t.norm_a₆_add_q_le h12
-    have b2 : ‖t.a₄ ^ 2‖ ≤ ‖(t.q : K)‖ ^ 2 := by
-      rw [norm_pow]; exact pow_le_pow_left₀ (norm_nonneg _) t.norm_a₄_le 2
-    have b3 : ‖(-64 : K) * t.a₄ ^ 3‖ ≤ ‖(t.q : K)‖ ^ 2 := by
-      rw [norm_mul, norm_neg, norm_pow]
-      calc ‖(64 : K)‖ * ‖t.a₄‖ ^ 3
-          ≤ 1 * ‖(t.q : K)‖ ^ 3 :=
-            mul_le_mul (norm_ofNat_le_one 64) (pow_le_pow_left₀ (norm_nonneg _) t.norm_a₄_le 3)
-              (pow_nonneg (norm_nonneg _) 3) zero_le_one
-        _ = ‖(t.q : K)‖ ^ 3 := one_mul _
-        _ ≤ ‖(t.q : K)‖ ^ 2 :=
-            pow_le_pow_of_le_one (norm_nonneg _) t.norm_lt_one.le (by norm_num)
-    have b4 : ‖(-432 : K) * t.a₆ ^ 2‖ ≤ ‖(t.q : K)‖ ^ 2 := by
-      rw [norm_mul, norm_neg, norm_pow]
-      calc ‖(432 : K)‖ * ‖t.a₆‖ ^ 2
-          ≤ 1 * ‖(t.q : K)‖ ^ 2 :=
-            mul_le_mul (norm_ofNat_le_one 432)
-              (pow_le_pow_left₀ (norm_nonneg _) (t.norm_a₆_le h12) 2)
-              (pow_nonneg (norm_nonneg _) 2) zero_le_one
-        _ = ‖(t.q : K)‖ ^ 2 := one_mul _
-    have b5 : ‖(72 : K) * t.a₄ * t.a₆‖ ≤ ‖(t.q : K)‖ ^ 2 := by
-      rw [norm_mul, norm_mul, pow_two]
-      calc ‖(72 : K)‖ * ‖t.a₄‖ * ‖t.a₆‖
-          ≤ 1 * ‖(t.q : K)‖ * ‖(t.q : K)‖ :=
-            mul_le_mul
-              (mul_le_mul (norm_ofNat_le_one 72) t.norm_a₄_le (norm_nonneg _) zero_le_one)
-              (t.norm_a₆_le h12) (norm_nonneg _) (by positivity)
-        _ = ‖(t.q : K)‖ * ‖(t.q : K)‖ := by rw [one_mul]
-    exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le
+  have hrw : t.tateCurve.Δ - (t.q : K)
+      = -(t.a₆ + (t.q : K)) + t.a₄ ^ 2 + (-64) * t.a₄ ^ 3 + (-432) * t.a₆ ^ 2
+          + 72 * t.a₄ * t.a₆ := by
+    rw [hΔ]; ring
+  rw [hrw]
+  have b1 : ‖-(t.a₆ + (t.q : K))‖ ≤ ‖(t.q : K)‖ ^ 2 := by
+    rw [norm_neg]; exact t.norm_a₆_add_q_le h12
+  have b2 : ‖t.a₄ ^ 2‖ ≤ ‖(t.q : K)‖ ^ 2 := by
+    rw [norm_pow]; exact pow_le_pow_left₀ (norm_nonneg _) t.norm_a₄_le 2
+  have b3 : ‖(-64 : K) * t.a₄ ^ 3‖ ≤ ‖(t.q : K)‖ ^ 2 := by
+    rw [norm_mul, norm_neg, norm_pow]
+    calc ‖(64 : K)‖ * ‖t.a₄‖ ^ 3
+        ≤ 1 * ‖(t.q : K)‖ ^ 3 :=
+          mul_le_mul (norm_ofNat_le_one 64) (pow_le_pow_left₀ (norm_nonneg _) t.norm_a₄_le 3)
+            (pow_nonneg (norm_nonneg _) 3) zero_le_one
+      _ = ‖(t.q : K)‖ ^ 3 := one_mul _
+      _ ≤ ‖(t.q : K)‖ ^ 2 :=
+          pow_le_pow_of_le_one (norm_nonneg _) t.norm_lt_one.le (by norm_num)
+  have b4 : ‖(-432 : K) * t.a₆ ^ 2‖ ≤ ‖(t.q : K)‖ ^ 2 := by
+    rw [norm_mul, norm_neg, norm_pow]
+    calc ‖(432 : K)‖ * ‖t.a₆‖ ^ 2
+        ≤ 1 * ‖(t.q : K)‖ ^ 2 :=
+          mul_le_mul (norm_ofNat_le_one 432)
+            (pow_le_pow_left₀ (norm_nonneg _) (t.norm_a₆_le h12) 2)
+            (pow_nonneg (norm_nonneg _) 2) zero_le_one
+      _ = ‖(t.q : K)‖ ^ 2 := one_mul _
+  have b5 : ‖(72 : K) * t.a₄ * t.a₆‖ ≤ ‖(t.q : K)‖ ^ 2 := by
+    rw [norm_mul, norm_mul, pow_two]
+    calc ‖(72 : K)‖ * ‖t.a₄‖ * ‖t.a₆‖
+        ≤ 1 * ‖(t.q : K)‖ * ‖(t.q : K)‖ :=
+          mul_le_mul
+            (mul_le_mul (norm_ofNat_le_one 72) t.norm_a₄_le (norm_nonneg _) zero_le_one)
+            (t.norm_a₆_le h12) (norm_nonneg _) (by positivity)
+      _ = ‖(t.q : K)‖ * ‖(t.q : K)‖ := by rw [one_mul]
+  exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le
+    ((IsUltrametricDist.norm_add_le_max _ _).trans (max_le
       ((IsUltrametricDist.norm_add_le_max _ _).trans (max_le
-        ((IsUltrametricDist.norm_add_le_max _ _).trans (max_le
-          ((IsUltrametricDist.norm_add_le_max _ _).trans (max_le b1 b2)) b3)) b4)) b5)
-  -- `‖q‖² < ‖q‖`, so `‖Δ‖ ≥ ‖q‖ - ‖q‖² > 0`.
-  have hlt : ‖(t.q : K)‖ ^ 2 < ‖(t.q : K)‖ := by
-    calc ‖(t.q : K)‖ ^ 2 = ‖(t.q : K)‖ * ‖(t.q : K)‖ := by rw [pow_two]
-      _ < 1 * ‖(t.q : K)‖ := by
-          gcongr
-          exacts [t.norm_q_pos, t.norm_lt_one]
-      _ = ‖(t.q : K)‖ := one_mul _
-  have hpos : 0 < ‖t.tateCurve.Δ‖ := by
-    have h1 : ‖(t.q : K)‖ - ‖(t.q : K) - t.tateCurve.Δ‖ ≤ ‖t.tateCurve.Δ‖ := by
-      simpa using norm_sub_norm_le (t.q : K) ((t.q : K) - t.tateCurve.Δ)
-    have h2 : ‖(t.q : K) - t.tateCurve.Δ‖ ≤ ‖(t.q : K)‖ ^ 2 := by
-      rw [norm_sub_rev]; exact hDnorm
-    linarith
-  exact norm_pos_iff.mp hpos
+        ((IsUltrametricDist.norm_add_le_max _ _).trans (max_le b1 b2)) b3)) b4)) b5)
+
+omit [IsUltrametricDist K] [CompleteSpace K] in
+/-- The strict inequality `‖q‖² < ‖q‖` for a Tate parameter. -/
+lemma norm_q_sq_lt : ‖(t.q : K)‖ ^ 2 < ‖(t.q : K)‖ := by
+  calc ‖(t.q : K)‖ ^ 2 = ‖(t.q : K)‖ * ‖(t.q : K)‖ := by rw [pow_two]
+    _ < 1 * ‖(t.q : K)‖ := by
+        gcongr
+        exacts [t.norm_q_pos, t.norm_lt_one]
+    _ = ‖(t.q : K)‖ := one_mul _
+
+/-- **The exact norm of the discriminant**: `‖Δ(E_q)‖ = ‖q‖`, by the ultrametric isosceles
+law applied to the leading-term estimate. -/
+theorem norm_tateCurve_Δ (h12 : ‖(12 : K)‖ = 1) : ‖t.tateCurve.Δ‖ = ‖(t.q : K)‖ := by
+  have hDnorm := t.norm_tateCurve_Δ_sub_q_le h12
+  have hlt : ‖t.tateCurve.Δ - (t.q : K)‖ < ‖(t.q : K)‖ :=
+    lt_of_le_of_lt hDnorm t.norm_q_sq_lt
+  have hup : ‖t.tateCurve.Δ‖ ≤ ‖(t.q : K)‖ := by
+    have h := IsUltrametricDist.norm_add_le_max (t.tateCurve.Δ - (t.q : K)) (t.q : K)
+    simpa using h.trans (max_le hlt.le le_rfl)
+  have hdown : ‖(t.q : K)‖ ≤ ‖t.tateCurve.Δ‖ := by
+    by_contra hcon
+    rw [not_le] at hcon
+    have h := IsUltrametricDist.norm_add_le_max ((t.q : K) - t.tateCurve.Δ) t.tateCurve.Δ
+    rw [sub_add_cancel] at h
+    have : ‖(t.q : K) - t.tateCurve.Δ‖ < ‖(t.q : K)‖ := by rwa [norm_sub_rev]
+    exact absurd (h.trans_lt (max_lt this hcon)) (lt_irrefl _)
+  exact le_antisymm hup hdown
+
+/-- **Nonvanishing of the discriminant.** Over a complete nonarchimedean field (residue
+characteristic `≠ 2, 3`), `Δ(E_q) ≠ 0`: indeed `‖Δ(E_q)‖ = ‖q‖ > 0`. -/
+theorem tateCurve_Δ_ne_zero (h12 : ‖(12 : K)‖ = 1) : t.tateCurve.Δ ≠ 0 := by
+  intro h
+  have := t.norm_tateCurve_Δ h12
+  rw [h, norm_zero] at this
+  exact absurd this.symm (ne_of_gt t.norm_q_pos)
 
 /-- **The Tate curve is an elliptic curve.** Under the residue-characteristic hypothesis
 `‖(12 : K)‖ = 1`, the nonvanishing of the discriminant upgrades `E_q` to a
