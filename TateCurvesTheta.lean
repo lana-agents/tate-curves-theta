@@ -30,9 +30,13 @@ import TateCurvesTheta.TateCurve.LargePointParametrization
 import TateCurvesTheta.TateCurve.Parametrization
 import TateCurvesTheta.TateCurve.PointMap
 import TateCurvesTheta.TateCurve.Quotient
+import TateCurvesTheta.TateCurve.SphereBounds
 import TateCurvesTheta.TateCurve.SplitReduction
+import TateCurvesTheta.TateCurve.SurjectivityAnnulus
+import TateCurvesTheta.TateCurve.SurjectivitySphere
 import TateCurvesTheta.TateCurve.TatePointMem
 import TateCurvesTheta.TateCurve.TatePointOnCurve
+import TateCurvesTheta.TateCurve.TateUniformization
 import TateCurvesTheta.TateCurve.Weierstrass
 import TateCurvesTheta.TateCurve.WeierstrassIdentity
 import TateCurvesTheta.Theta.Basic
