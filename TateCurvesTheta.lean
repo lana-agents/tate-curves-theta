@@ -20,6 +20,7 @@ import TateCurvesTheta.TateCurve.DefectVanishing
 import TateCurvesTheta.TateCurve.Discriminant
 import TateCurvesTheta.TateCurve.EisensteinKernels
 import TateCurvesTheta.TateCurve.EisensteinSeries
+import TateCurvesTheta.TateCurve.GroupLaw
 import TateCurvesTheta.TateCurve.IntegralModel
 import TateCurvesTheta.TateCurve.LargePointParametrization
 import TateCurvesTheta.TateCurve.Parametrization
