@@ -9,12 +9,11 @@ import TateCurvesTheta.TateCurve.JInvariant
 /-!
 # Existence and uniqueness of the Tate parameter with prescribed `j`-invariant
 
-Over a complete nonarchimedean field `K` (with `‖12‖ = 1`, i.e. residue characteristic
-`≠ 2, 3`), the map `q ↦ j(E_q)` is a **bijection** from Tate parameters (`0 < ‖q‖ < 1`)
-onto the non-integral locus `{j : K | 1 < ‖j‖}`. This is the analytic heart of Tate's
-theory: every elliptic curve over `K` with non-integral `j`-invariant has a (unique)
-candidate Tate parameter, the first step towards the uniformization theorem for curves
-with split multiplicative reduction (issue #37).
+Over a complete nonarchimedean field `K` with `(12 : K) ≠ 0`, the map `q ↦ j(E_q)` is a
+**bijection** from Tate parameters (`0 < ‖q‖ < 1`) onto the non-integral locus
+`{j : K | 1 < ‖j‖}`. This is the analytic heart of Tate's theory: every elliptic curve over
+`K` with non-integral `j`-invariant has a (unique) candidate Tate parameter, the first step
+towards the uniformization theorem for curves with split multiplicative reduction (issue #37).
 
 The proof is quantitative. All the `q`-series involved (`sₖ(q)`, `a₄`, `a₆`, `c₄`, `Δ`)
 are Lipschitz in `q` with constant `1`, and the "degree `≥ 2`" combinations
@@ -76,27 +75,6 @@ def ofNormLtOne {x : K} (h0 : x ≠ 0) (h1 : ‖x‖ < 1) : TateParameter K :=
     ((ofNormLtOne h0 h1).q : K) = x := rfl
 
 variable [IsUltrametricDist K]
-
-/-- **Ultrametric power-difference bound**: `‖x^(n+1) - y^(n+1)‖ ≤ max ‖x‖ ‖y‖ ^ n · ‖x - y‖`,
-by induction from `x^(n+2) - y^(n+2) = x (x^(n+1) - y^(n+1)) + y^(n+1) (x - y)` and the
-ultrametric inequality. -/
-lemma norm_pow_sub_pow_le (x y : K) (n : ℕ) :
-    ‖x ^ (n + 1) - y ^ (n + 1)‖ ≤ (max ‖x‖ ‖y‖) ^ n * ‖x - y‖ := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [show x ^ (n + 2) - y ^ (n + 2)
-        = x * (x ^ (n + 1) - y ^ (n + 1)) + y ^ (n + 1) * (x - y) from by ring]
-    refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ ?_)
-    · rw [norm_mul]
-      calc ‖x‖ * ‖x ^ (n + 1) - y ^ (n + 1)‖
-          ≤ max ‖x‖ ‖y‖ * ((max ‖x‖ ‖y‖) ^ n * ‖x - y‖) :=
-            mul_le_mul (le_max_left _ _) ih (norm_nonneg _)
-              (le_trans (norm_nonneg x) (le_max_left _ _))
-        _ = (max ‖x‖ ‖y‖) ^ (n + 1) * ‖x - y‖ := by ring
-    · rw [norm_mul, norm_pow]
-      exact mul_le_mul_of_nonneg_right
-        (pow_le_pow_left₀ (norm_nonneg _) (le_max_right _ _) _) (norm_nonneg _)
 
 /-- In a nonarchimedean normed field, every natural-number literal `≥ 2` has norm `≤ 1`. -/
 private lemma norm_ofNat_le_one (n : ℕ) [n.AtLeastTwo] :
@@ -245,30 +223,6 @@ lemma norm_a₄_sub_le : ‖t₁.a₄ - t₂.a₄‖ ≤ ‖(t₁.q : K) - (t₂
           zero_le_one
     _ = ‖(t₁.q : K) - (t₂.q : K)‖ := one_mul _
 
-/-- **Lipschitz estimate for `a₆`**: `‖a₆(q₁) - a₆(q₂)‖ ≤ ‖q₁ - q₂‖`
-(residue characteristic `≠ 2, 3`). -/
-lemma norm_a₆_sub_le (h12 : ‖(12 : K)‖ = 1) :
-    ‖t₁.a₆ - t₂.a₆‖ ≤ ‖(t₁.q : K) - (t₂.q : K)‖ := by
-  rw [a₆_def, a₆_def, div_sub_div_same,
-    show -(5 * t₁.eisenstein 3 + 7 * t₁.eisenstein 5)
-        - -(5 * t₂.eisenstein 3 + 7 * t₂.eisenstein 5)
-      = -(5 * (t₁.eisenstein 3 - t₂.eisenstein 3) + 7 * (t₁.eisenstein 5 - t₂.eisenstein 5))
-        from by ring,
-    norm_div, h12, div_one, norm_neg]
-  refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ ?_)
-  · rw [norm_mul]
-    calc ‖(5 : K)‖ * ‖t₁.eisenstein 3 - t₂.eisenstein 3‖
-        ≤ 1 * ‖(t₁.q : K) - (t₂.q : K)‖ :=
-          mul_le_mul (norm_ofNat_le_one 5) (t₁.norm_eisenstein_sub_le t₂ 3) (norm_nonneg _)
-            zero_le_one
-      _ = ‖(t₁.q : K) - (t₂.q : K)‖ := one_mul _
-  · rw [norm_mul]
-    calc ‖(7 : K)‖ * ‖t₁.eisenstein 5 - t₂.eisenstein 5‖
-        ≤ 1 * ‖(t₁.q : K) - (t₂.q : K)‖ :=
-          mul_le_mul (norm_ofNat_le_one 7) (t₁.norm_eisenstein_sub_le t₂ 5) (norm_nonneg _)
-            zero_le_one
-      _ = ‖(t₁.q : K) - (t₂.q : K)‖ := one_mul _
-
 /-- **Lipschitz estimate for `c₄`**: `‖c₄(E_{q₁}) - c₄(E_{q₂})‖ ≤ ‖q₁ - q₂‖`. -/
 lemma norm_tateCurve_c₄_sub_le :
     ‖t₁.tateCurve.c₄ - t₂.tateCurve.c₄‖ ≤ ‖(t₁.q : K) - (t₂.q : K)‖ := by
@@ -288,47 +242,10 @@ lemma norm_tateCurve_c₄_cube_sub_le :
   rw [t₁.norm_tateCurve_c₄, t₂.norm_tateCurve_c₄, max_self, one_pow, one_mul] at h
   simpa using h.trans (t₁.norm_tateCurve_c₄_sub_le t₂)
 
-/-- **Degree-`≥ 2` Lipschitz estimate for `a₆ + q`**:
-`‖(a₆(q₁) + q₁) - (a₆(q₂) + q₂)‖ ≤ max ‖q₁‖ ‖q₂‖ · ‖q₁ - q₂‖`
-(residue characteristic `≠ 2, 3`). -/
-lemma norm_a₆_add_q_sub_le (h12 : ‖(12 : K)‖ = 1) :
-    ‖(t₁.a₆ + (t₁.q : K)) - (t₂.a₆ + (t₂.q : K))‖
-      ≤ max ‖(t₁.q : K)‖ ‖(t₂.q : K)‖ * ‖(t₁.q : K) - (t₂.q : K)‖ := by
-  have hM0 : (0 : ℝ) ≤ max ‖(t₁.q : K)‖ ‖(t₂.q : K)‖ :=
-    le_trans (norm_nonneg _) (le_max_left _ _)
-  have h12ne : (12 : K) ≠ 0 := by
-    intro h; rw [h, norm_zero] at h12; exact zero_ne_one h12
-  have key₁ : t₁.a₆ + (t₁.q : K)
-      = -(5 * (t₁.eisenstein 3 - (t₁.q : K)) + 7 * (t₁.eisenstein 5 - (t₁.q : K))) / 12 := by
-    rw [a₆_def]; field_simp; ring
-  have key₂ : t₂.a₆ + (t₂.q : K)
-      = -(5 * (t₂.eisenstein 3 - (t₂.q : K)) + 7 * (t₂.eisenstein 5 - (t₂.q : K))) / 12 := by
-    rw [a₆_def]; field_simp; ring
-  rw [key₁, key₂, div_sub_div_same,
-    show -(5 * (t₁.eisenstein 3 - (t₁.q : K)) + 7 * (t₁.eisenstein 5 - (t₁.q : K)))
-        - -(5 * (t₂.eisenstein 3 - (t₂.q : K)) + 7 * (t₂.eisenstein 5 - (t₂.q : K)))
-      = -(5 * ((t₁.eisenstein 3 - (t₁.q : K)) - (t₂.eisenstein 3 - (t₂.q : K)))
-          + 7 * ((t₁.eisenstein 5 - (t₁.q : K)) - (t₂.eisenstein 5 - (t₂.q : K))))
-        from by ring,
-    norm_div, h12, div_one, norm_neg]
-  refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ ?_)
-  · rw [norm_mul]
-    calc ‖(5 : K)‖ * ‖(t₁.eisenstein 3 - (t₁.q : K)) - (t₂.eisenstein 3 - (t₂.q : K))‖
-        ≤ 1 * (max ‖(t₁.q : K)‖ ‖(t₂.q : K)‖ * ‖(t₁.q : K) - (t₂.q : K)‖) :=
-          mul_le_mul (norm_ofNat_le_one 5) (t₁.norm_eisenstein_sub_q_sub_le t₂ 3)
-            (norm_nonneg _) zero_le_one
-      _ = max ‖(t₁.q : K)‖ ‖(t₂.q : K)‖ * ‖(t₁.q : K) - (t₂.q : K)‖ := one_mul _
-  · rw [norm_mul]
-    calc ‖(7 : K)‖ * ‖(t₁.eisenstein 5 - (t₁.q : K)) - (t₂.eisenstein 5 - (t₂.q : K))‖
-        ≤ 1 * (max ‖(t₁.q : K)‖ ‖(t₂.q : K)‖ * ‖(t₁.q : K) - (t₂.q : K)‖) :=
-          mul_le_mul (norm_ofNat_le_one 7) (t₁.norm_eisenstein_sub_q_sub_le t₂ 5)
-            (norm_nonneg _) zero_le_one
-      _ = max ‖(t₁.q : K)‖ ‖(t₂.q : K)‖ * ‖(t₁.q : K) - (t₂.q : K)‖ := one_mul _
-
 /-- **Degree-`≥ 2` Lipschitz estimate for `Δ - q`**:
 `‖(Δ(E_{q₁}) - q₁) - (Δ(E_{q₂}) - q₂)‖ ≤ max ‖q₁‖ ‖q₂‖ · ‖q₁ - q₂‖`
-(residue characteristic `≠ 2, 3`). -/
-lemma norm_tateCurve_Δ_sub_q_sub_le (h12 : ‖(12 : K)‖ = 1) :
+(`(12 : K) ≠ 0`). -/
+lemma norm_tateCurve_Δ_sub_q_sub_le (h12 : (12 : K) ≠ 0) :
     ‖(t₁.tateCurve.Δ - (t₁.q : K)) - (t₂.tateCurve.Δ - (t₂.q : K))‖
       ≤ max ‖(t₁.q : K)‖ ‖(t₂.q : K)‖ * ‖(t₁.q : K) - (t₂.q : K)‖ := by
   have hM0 : (0 : ℝ) ≤ max ‖(t₁.q : K)‖ ‖(t₂.q : K)‖ :=
@@ -398,8 +315,8 @@ lemma norm_tateCurve_Δ_sub_q_sub_le (h12 : ‖(12 : K)‖ = 1) :
 
 /-- **The discriminant is an isometry in the Tate parameter**:
 `‖Δ(E_{q₁}) - Δ(E_{q₂})‖ = ‖q₁ - q₂‖`, by the ultrametric isosceles law applied to the
-degree-`≥ 2` estimate for `Δ - q` (residue characteristic `≠ 2, 3`). -/
-theorem norm_tateCurve_Δ_sub_Δ (h12 : ‖(12 : K)‖ = 1) :
+degree-`≥ 2` estimate for `Δ - q` (`(12 : K) ≠ 0`). -/
+theorem norm_tateCurve_Δ_sub_Δ (h12 : (12 : K) ≠ 0) :
     ‖t₁.tateCurve.Δ - t₂.tateCurve.Δ‖ = ‖(t₁.q : K) - (t₂.q : K)‖ := by
   by_cases hq : (t₁.q : K) = (t₂.q : K)
   · rw [eq_of_q_eq hq]
@@ -415,10 +332,10 @@ theorem norm_tateCurve_Δ_sub_Δ (h12 : ‖(12 : K)‖ = 1) :
       IsUltrametricDist.norm_add_eq_max_of_norm_ne_norm hlt.ne', max_eq_left hlt.le]
 
 /-- **The `j`-isometry**: `‖j(E_{q₁}) - j(E_{q₂})‖ = ‖q₁ - q₂‖ / (‖q₁‖ · ‖q₂‖)`
-(residue characteristic `≠ 2, 3`). The numerator `c₄₁³·Δ₂ - Δ₁·c₄₂³` decomposes as
+(`(12 : K) ≠ 0`). The numerator `c₄₁³·Δ₂ - Δ₁·c₄₂³` decomposes as
 `c₄₁³·(Δ₂ - Δ₁) + Δ₁·(c₄₁³ - c₄₂³)`, in which the first summand has exact norm
 `‖q₁ - q₂‖` and strictly dominates the second, so the isosceles law applies. -/
-theorem norm_tateJ_sub_tateJ (h12 : ‖(12 : K)‖ = 1) :
+theorem norm_tateJ_sub_tateJ (h12 : (12 : K) ≠ 0) :
     ‖t₁.tateJ - t₂.tateJ‖
       = ‖(t₁.q : K) - (t₂.q : K)‖ / (‖(t₁.q : K)‖ * ‖(t₂.q : K)‖) := by
   by_cases hq : (t₁.q : K) = (t₂.q : K)
@@ -455,8 +372,8 @@ theorem norm_tateJ_sub_tateJ (h12 : ‖(12 : K)‖ = 1) :
     rw [hkey, norm_div, hnum, norm_mul, t₁.norm_tateCurve_Δ h12, t₂.norm_tateCurve_Δ h12]
 
 /-- **Injectivity of `q ↦ j(E_q)`**: distinct Tate parameters have distinct `j`-invariants
-(residue characteristic `≠ 2, 3`). -/
-theorem tateJ_injective (h12 : ‖(12 : K)‖ = 1) (h : t₁.tateJ = t₂.tateJ) : t₁ = t₂ := by
+(`(12 : K) ≠ 0`). -/
+theorem tateJ_injective (h12 : (12 : K) ≠ 0) (h : t₁.tateJ = t₂.tateJ) : t₁ = t₂ := by
   have h0 := t₁.norm_tateJ_sub_tateJ t₂ h12
   rw [h, sub_self, norm_zero] at h0
   have hpos : 0 < ‖(t₁.q : K)‖ * ‖(t₂.q : K)‖ := mul_pos t₁.norm_q_pos t₂.norm_q_pos
@@ -468,7 +385,7 @@ theorem tateJ_injective (h12 : ‖(12 : K)‖ = 1) (h : t₁.tateJ = t₂.tateJ)
 `≤ ‖q‖²`, the numerator `q₁c₄₁³Δ₂ - q₂c₄₂³Δ₁` decomposes as
 `q₁q₂(c₄₁³ - c₄₂³) + c₄₁³(q₁·g(q₂) - q₂·g(q₁)) + g(q₁)q₂(c₄₁³ - c₄₂³)`, each summand of
 norm `≤ max ‖q₁‖ ‖q₂‖ ² · ‖q₁ - q₂‖`. -/
-private lemma norm_contraction_num_le (h12 : ‖(12 : K)‖ = 1) :
+private lemma norm_contraction_num_le (h12 : (12 : K) ≠ 0) :
     ‖(t₁.q : K) * t₁.tateCurve.c₄ ^ 3 * t₂.tateCurve.Δ
         - (t₂.q : K) * t₂.tateCurve.c₄ ^ 3 * t₁.tateCurve.Δ‖
       ≤ (max ‖(t₁.q : K)‖ ‖(t₂.q : K)‖) ^ 2 * ‖(t₁.q : K) - (t₂.q : K)‖ := by
@@ -548,7 +465,7 @@ private lemma phi_of_pos {j x : K} (h0 : x ≠ 0) (h1 : ‖x‖ < 1) :
   dif_pos ⟨h0, h1⟩
 
 /-- The iteration map sends the punctured unit ball onto the sphere of radius `‖j‖⁻¹`. -/
-private lemma norm_phi (h12 : ‖(12 : K)‖ = 1) {j x : K} (h0 : x ≠ 0) (h1 : ‖x‖ < 1) :
+private lemma norm_phi (h12 : (12 : K) ≠ 0) {j x : K} (h0 : x ≠ 0) (h1 : ‖x‖ < 1) :
     ‖phi j x‖ = ‖j‖⁻¹ := by
   rw [phi_of_pos h0 h1, norm_div, norm_mul, norm_mul, norm_pow,
     (ofNormLtOne h0 h1).norm_tateCurve_c₄, one_pow, mul_one,
@@ -557,7 +474,7 @@ private lemma norm_phi (h12 : ‖(12 : K)‖ = 1) {j x : K} (h0 : x ≠ 0) (h1 :
 
 /-- The contraction estimate on the sphere `‖x‖ = ‖j‖⁻¹`:
 `‖Φ_j(x) - Φ_j(y)‖ ≤ ‖j‖⁻¹·‖x - y‖`. -/
-private lemma norm_phi_sub_phi (h12 : ‖(12 : K)‖ = 1) {j x y : K} (hj : 1 < ‖j‖)
+private lemma norm_phi_sub_phi (h12 : (12 : K) ≠ 0) {j x y : K} (hj : 1 < ‖j‖)
     (hx0 : x ≠ 0) (hy0 : y ≠ 0) (hx : ‖x‖ = ‖j‖⁻¹) (hy : ‖y‖ = ‖j‖⁻¹) :
     ‖phi j x - phi j y‖ ≤ ‖j‖⁻¹ * ‖x - y‖ := by
   have hjpos : 0 < ‖j‖ := lt_trans one_pos hj
@@ -594,7 +511,7 @@ private def jSeq (j : K) : ℕ → K
   | n + 1 => phi j (jSeq j n)
 
 /-- The iteration stays on the sphere of radius `‖j‖⁻¹`. -/
-private lemma norm_jSeq (h12 : ‖(12 : K)‖ = 1) {j : K} (hj : 1 < ‖j‖) (n : ℕ) :
+private lemma norm_jSeq (h12 : (12 : K) ≠ 0) {j : K} (hj : 1 < ‖j‖) (n : ℕ) :
     ‖jSeq j n‖ = ‖j‖⁻¹ := by
   have hjpos : 0 < ‖j‖ := lt_trans one_pos hj
   have hr0 : 0 < ‖j‖⁻¹ := inv_pos.mpr hjpos
@@ -608,7 +525,7 @@ private lemma norm_jSeq (h12 : ‖(12 : K)‖ = 1) {j : K} (hj : 1 < ‖j‖) (n
     exact norm_phi h12 h0 h1
 
 /-- Geometric decay of consecutive differences along the iteration. -/
-private lemma norm_jSeq_sub_le (h12 : ‖(12 : K)‖ = 1) {j : K} (hj : 1 < ‖j‖) (n : ℕ) :
+private lemma norm_jSeq_sub_le (h12 : (12 : K) ≠ 0) {j : K} (hj : 1 < ‖j‖) (n : ℕ) :
     ‖jSeq j n - jSeq j (n + 1)‖ ≤ ‖jSeq j 0 - jSeq j 1‖ * (‖j‖⁻¹) ^ n := by
   have hjpos : 0 < ‖j‖ := lt_trans one_pos hj
   have hr0 : 0 < ‖j‖⁻¹ := inv_pos.mpr hjpos
@@ -627,10 +544,10 @@ private lemma norm_jSeq_sub_le (h12 : ‖(12 : K)‖ = 1) {j : K} (hj : 1 < ‖j
       _ = ‖jSeq j 0 - jSeq j 1‖ * (‖j‖⁻¹) ^ (n + 1) := by ring
 
 /-- **Existence of the Tate parameter with prescribed `j`-invariant**: for every `j : K`
-with `1 < ‖j‖` there is a Tate parameter `q` with `j(E_q) = j` (residue characteristic
-`≠ 2, 3`). The parameter is produced as the limit of the contracting fixed-point iteration
+with `1 < ‖j‖` there is a Tate parameter `q` with `j(E_q) = j` (`(12 : K) ≠ 0`). The
+parameter is produced as the limit of the contracting fixed-point iteration
 `x₀ = j⁻¹`, `x_{k+1} = x_k·c₄(E_{x_k})³/(j·Δ(E_{x_k}))` on the sphere `‖x‖ = ‖j‖⁻¹`. -/
-theorem exists_tateParameter_tateJ_eq (h12 : ‖(12 : K)‖ = 1) {j : K} (hj : 1 < ‖j‖) :
+theorem exists_tateParameter_tateJ_eq (h12 : (12 : K) ≠ 0) {j : K} (hj : 1 < ‖j‖) :
     ∃ t : TateParameter K, t.tateJ = j := by
   have hjpos : 0 < ‖j‖ := lt_trans one_pos hj
   have hj0 : j ≠ 0 := norm_pos_iff.mp hjpos
@@ -671,9 +588,9 @@ theorem exists_tateParameter_tateJ_eq (h12 : ‖(12 : K)‖ = 1) {j : K} (hj : 1
   exact mul_div_cancel_right₀ j hΔ
 
 /-- **Existence and uniqueness of the Tate parameter with prescribed `j`-invariant**:
-`q ↦ j(E_q)` is a bijection from Tate parameters onto `{j : K | 1 < ‖j‖}` (residue
-characteristic `≠ 2, 3`). -/
-theorem existsUnique_tateParameter_tateJ_eq (h12 : ‖(12 : K)‖ = 1) {j : K}
+`q ↦ j(E_q)` is a bijection from Tate parameters onto `{j : K | 1 < ‖j‖}`
+(`(12 : K) ≠ 0`). -/
+theorem existsUnique_tateParameter_tateJ_eq (h12 : (12 : K) ≠ 0) {j : K}
     (hj : 1 < ‖j‖) : ∃! t : TateParameter K, t.tateJ = j := by
   obtain ⟨t, ht⟩ := exists_tateParameter_tateJ_eq h12 hj
   exact ⟨t, ht, fun t' ht' => tateJ_injective t' t h12 (ht'.trans ht.symm)⟩

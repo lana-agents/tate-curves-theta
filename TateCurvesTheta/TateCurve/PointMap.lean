@@ -32,8 +32,10 @@ hmem : ∀ u, (∀ n : ℤ, qⁿ·u ≠ 1) → t.tateCurve.toAffine.Equation (t.
 ```
 which is *exactly* the conclusion of `tatePoint_mem` (dischargeable once #146 and the normalization
 land). Building an honest `Point` also needs to upgrade `Equation` to `Nonsingular`; this uses
-`equation_iff_nonsingular`, hence the residue-characteristic hypothesis `h12 : ‖(12 : K)‖ = 1`
-(via `tateCurve_isElliptic`, #93). Both hypotheses are stated explicitly.
+`equation_iff_nonsingular`, hence the residue-characteristic hypothesis `h12 : TameResidueChar K`
+(`‖2‖ = 1 ∧ 12 ≠ 0`; only the component `12 ≠ 0` is used here, via `tateCurve_isElliptic`, #93,
+while `‖2‖ = 1` is the standing hypothesis of the group law built on top of this map). Both
+hypotheses are stated explicitly.
 
 ## What is delivered here, and what stays a seam
 
@@ -101,16 +103,16 @@ other `u` to the affine point `(X(u), Y(u))` on `E_q`, which lies on the curve b
 def tatePoint
     (hmem : ∀ u : Kˣ, (∀ n : ℤ, (t.q : K) ^ n * (u : K) ≠ 1) →
       t.tateCurve.toAffine.Equation (t.X u) (t.Y u))
-    (h12 : ‖(12 : K)‖ = 1) (u : Kˣ) : t.tateCurve.toAffine.Point :=
+    (h12 : TameResidueChar K) (u : Kˣ) : t.tateCurve.toAffine.Point :=
   if h : u ∈ t.qpowers then 0
   else
-    haveI : t.tateCurve.toAffine.IsElliptic := t.tateCurve_isElliptic h12
+    haveI : t.tateCurve.toAffine.IsElliptic := t.tateCurve_isElliptic h12.2
     .some (t.X u) (t.Y u)
       (WeierstrassCurve.Affine.equation_iff_nonsingular.mp
         (hmem u (t.qzpow_mul_ne_one_of_notMem h)))
 
 variable (hmem : ∀ u : Kˣ, (∀ n : ℤ, (t.q : K) ^ n * (u : K) ≠ 1) →
-    t.tateCurve.toAffine.Equation (t.X u) (t.Y u)) (h12 : ‖(12 : K)‖ = 1)
+    t.tateCurve.toAffine.Equation (t.X u) (t.Y u)) (h12 : TameResidueChar K)
 
 /-- On the orbit `u ∈ qᶻ`, the point map is the identity `O` of the Mordell–Weil group. -/
 lemma tatePoint_of_mem {u : Kˣ} (hu : u ∈ t.qpowers) : t.tatePoint hmem h12 u = 0 := by
@@ -119,7 +121,7 @@ lemma tatePoint_of_mem {u : Kˣ} (hu : u ∈ t.qpowers) : t.tatePoint hmem h12 u
 
 /-- Off the orbit, the point map is the affine point `(X(u), Y(u))`. -/
 lemma tatePoint_of_notMem {u : Kˣ} (hu : u ∉ t.qpowers) :
-    haveI : t.tateCurve.toAffine.IsElliptic := t.tateCurve_isElliptic h12
+    haveI : t.tateCurve.toAffine.IsElliptic := t.tateCurve_isElliptic h12.2
     t.tatePoint hmem h12 u =
       .some (t.X u) (t.Y u)
         (WeierstrassCurve.Affine.equation_iff_nonsingular.mp

@@ -341,10 +341,10 @@ theorem norm_Y_sub_annulus_le {u : Kˣ} (hlo : ‖(t.q : K)‖ < ‖(u : K)‖)
 /-! ### Curve-side norm classification -/
 
 /-- **Integral points stay integral.** On the Tate curve `y² + xy = x³ + a₄x + a₆`
-(residue characteristic `≠ 2, 3`), an affine point with `‖x‖ ≤ 1` has `‖y‖ ≤ 1`: otherwise
-`‖y² + xy‖ = ‖y‖² > 1` would exceed the norm of the right-hand side, which is `≤ 1` by the
+(`TameResidueChar K`; only `12 ≠ 0` is used), an affine point with `‖x‖ ≤ 1` has `‖y‖ ≤ 1`:
+otherwise `‖y² + xy‖ = ‖y‖² > 1` would exceed the norm of the right-hand side, which is `≤ 1` by the
 integrality `‖a₄‖, ‖a₆‖ ≤ ‖q‖ < 1`. -/
-theorem norm_y_le_one_of_norm_x_le_one (h12 : ‖(12 : K)‖ = 1) {x y : K}
+theorem norm_y_le_one_of_norm_x_le_one (h12 : TameResidueChar K) {x y : K}
     (hxy : y ^ 2 + x * y = x ^ 3 + t.a₄ * x + t.a₆) (hx : ‖x‖ ≤ 1) : ‖y‖ ≤ 1 := by
   by_contra hcon
   rw [not_le] at hcon
@@ -364,14 +364,14 @@ theorem norm_y_le_one_of_norm_x_le_one (h12 : ‖(12 : K)‖ = 1) {x y : K}
         exact pow_le_one₀ (norm_nonneg _) hx
       · rw [norm_mul]
         exact mul_le_one₀ (t.norm_a₄_le.trans t.norm_lt_one.le) (norm_nonneg _) hx
-    · exact (t.norm_a₆_le h12).trans t.norm_lt_one.le
+    · exact (t.norm_a₆_le h12.2).trans t.norm_lt_one.le
   have hcontra : ‖y‖ ^ 2 ≤ 1 := by
     rw [← hL, hxy]
     exact hR
   nlinarith
 
 /-- **Deep-zone norm classification on the Tate curve.** For an affine point of `E_q` with
-`‖x‖² ≤ ‖q‖` and `‖x‖ < 1` (residue characteristic `≠ 2, 3`), the right-hand side
+`‖x‖² ≤ ‖q‖` and `‖x‖ < 1` (`TameResidueChar K`; only `12 ≠ 0` is used), the right-hand side
 `x³ + a₄x + a₆` of the Weierstrass equation has norm exactly `‖q‖` — its leading term is
 `a₆ = -q + O(q²)` — and the ultrametric analysis of `‖y‖·‖y + x‖ = ‖q‖` forces
 `‖y‖² = ‖q‖` together with `‖x‖ ≤ ‖y‖`.
@@ -379,7 +379,7 @@ theorem norm_y_le_one_of_norm_x_le_one (h12 : ‖(12 : K)‖ = 1) {x y : K}
 The a-priori disjunction (either `‖y‖² = ‖q‖`, or the boundary case `‖x‖² = ‖q‖` with
 `‖y‖ ≤ ‖x‖`) collapses: `‖y‖ < ‖x‖` would give `‖q‖ = ‖y‖·‖x‖ < ‖x‖² ≤ ‖q‖`, and
 `‖y‖ = ‖x‖` forces `‖x‖² = ‖q‖ = ‖y‖²`, so the first alternative always holds. -/
-theorem norm_y_sq_eq_of_node (h12 : ‖(12 : K)‖ = 1) {x y : K}
+theorem norm_y_sq_eq_of_node (h12 : TameResidueChar K) {x y : K}
     (hxy : y ^ 2 + x * y = x ^ 3 + t.a₄ * x + t.a₆)
     (hx : ‖x‖ ^ 2 ≤ ‖(t.q : K)‖) (hx1 : ‖x‖ < 1) :
     ‖y‖ ^ 2 = ‖(t.q : K)‖ ∧ ‖x‖ ≤ ‖y‖ := by
@@ -394,7 +394,7 @@ theorem norm_y_sq_eq_of_node (h12 : ‖(12 : K)‖ = 1) {x y : K}
       · rw [norm_mul]
         nlinarith [norm_nonneg x, mul_le_mul_of_nonneg_right t.norm_a₄_le (norm_nonneg x),
           mul_lt_mul_of_pos_left hx1 hq0]
-    · exact lt_of_le_of_lt (t.norm_a₆_add_q_le h12) t.norm_q_sq_lt
+    · exact lt_of_le_of_lt (t.norm_a₆_add_q_le h12.2) t.norm_q_sq_lt
   -- hence the right-hand side has norm exactly `‖q‖`
   have hRHS : ‖x ^ 3 + t.a₄ * x + t.a₆‖ = ‖(t.q : K)‖ := by
     have hrw : x ^ 3 + t.a₄ * x + t.a₆

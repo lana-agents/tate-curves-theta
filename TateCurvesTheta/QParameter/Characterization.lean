@@ -9,8 +9,8 @@ import TateCurvesTheta.TateCurve.SplitReduction
 /-!
 # Characterization of the Tate `q`-parameter
 
-The capstone of issue #37: over a complete nonarchimedean field `K` (residue
-characteristic `≠ 2, 3`), the assignment `q ↦ E_q` is a bijection
+The capstone of issue #37: over a complete nonarchimedean field `K` with `(12 : K) ≠ 0`,
+the assignment `q ↦ E_q` is a bijection
 
     { Tate parameters q, 0 < ‖q‖ < 1 }  ≃  { j : K, ‖j‖ > 1 }
 
@@ -55,7 +55,7 @@ variable {K : Type*} [NormedField K] [IsUltrametricDist K] [CompleteSpace K]
 `‖j‖ > 1` there is a *unique* Tate parameter `q` whose Tate curve has `j`-invariant `j` —
 and the Tate curve of this parameter automatically has **split multiplicative
 reduction**. -/
-theorem existsUnique_splitMultiplicative_tateParameter (h12 : ‖(12 : K)‖ = 1) {j : K}
+theorem existsUnique_splitMultiplicative_tateParameter (h12 : (12 : K) ≠ 0) {j : K}
     (hj : 1 < ‖j‖) :
     ∃! t : TateParameter K, t.tateJ = j ∧
       ((t.tateCurveInt h12).map

@@ -11,6 +11,7 @@ import TateCurvesTheta.QParameter.Characterization
 import TateCurvesTheta.QParameter.JParametrization
 import TateCurvesTheta.QParameter.NormalizedOrder
 import TateCurvesTheta.QParameter.PrimeToOrder
+import TateCurvesTheta.TateCurve.A6Series
 import TateCurvesTheta.TateCurve.AbelStep
 import TateCurvesTheta.TateCurve.AdditionLaw
 import TateCurvesTheta.TateCurve.CoordinateAnnulusLaurent

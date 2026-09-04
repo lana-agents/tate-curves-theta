@@ -3,8 +3,7 @@ Copyright (c) 2026 The tate-curves-theta contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: The tate-curves-theta contributors
 -/
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Topology.Algebra.InfiniteSum.Ring
+import TateCurvesTheta.TateCurve.A6Series
 import TateCurvesTheta.TateCurve.Discriminant
 
 /-!
@@ -17,18 +16,17 @@ and in fact lie in the maximal ideal `𝔪 = {x : ‖x‖ < 1}`: we prove `‖a�
 special fiber is the nodal cubic `y² + x y = x³`, whose node at `(0,0)` has the two rational
 tangent directions `y = 0` and `y = -x` — the hallmark of *split* multiplicative reduction.
 
-## Integrality of `a₆` and residue characteristic `2, 3`
+## Integrality of `a₆` and the hypothesis `(12 : K) ≠ 0`
 
 `‖a₄‖ ≤ ‖q‖` is immediate from `‖s₃‖ ≤ ‖q‖` (`Discriminant.norm_eisenstein_le`: every Eisenstein
 term has norm `≤ ‖q‖`). The integrality of `a₆` is deeper: the denominator `12` is only harmless
-because of the term-wise divisibility `12 ∣ 5 m³ + 7 m⁵` (proved here by a residue computation in
-`ZMod 12`), which lets us rewrite `5 s₃(q) + 7 s₅(q) = 12 · ∑ₘ cₘ · qᵐ/(1-qᵐ)` with *integer*
-coefficients `cₘ = (5 m³ + 7 m⁵)/12`, so that `a₆(q) = -∑ₘ cₘ · qᵐ/(1-qᵐ)` has norm `≤ ‖q‖`. This
-is exactly the classical integrality of the Tate coefficients (Silverman ATAEC Ch. V), and it holds
-in *every* residue characteristic. The only genuine hypothesis is `(12 : K) ≠ 0` (residue
-characteristic `≠ 2, 3`), which is already required for the `a₆` formula — with its literal `/12` —
-to be non-degenerate. In particular this is strictly stronger than the interim bound
-`Discriminant.norm_a₆_le`, which assumed the norm hypothesis `‖(12 : K)‖ = 1`.
+because of the term-wise divisibility `12 ∣ 5 m³ + 7 m⁵` (proved in `A6Series.lean` by a residue
+computation in `ZMod 12`), which lets us rewrite `5 s₃(q) + 7 s₅(q) = 12 · ∑ₘ cₘ · qᵐ/(1-qᵐ)` with
+*integer* coefficients `cₘ = (5 m³ + 7 m⁵)/12`, so that `a₆(q) = -∑ₘ cₘ · qᵐ/(1-qᵐ)`
+(`A6Series.a₆_eq_neg_tsum`) has norm `≤ ‖q‖` (`A6Series.norm_a₆_le`). This is exactly the
+classical integrality of the Tate coefficients (Silverman ATAEC Ch. V), and it holds in *every*
+residue characteristic. The only genuine hypothesis is `(12 : K) ≠ 0`, which is already required
+for the `a₆` formula — with its literal `/12` — to be non-degenerate.
 
 ## The reduction of the actual invariants of `E_q`
 
@@ -51,7 +49,6 @@ fiber (reusing the `formal-schemes` dependency) is left as a documented seam.
 ## Main results
 
 * `TateCurvesTheta.TateParameter.norm_a₄_lt_one` : `‖a₄(q)‖ < 1` (integrality of `a₄`).
-* `TateCurvesTheta.TateParameter.a₆_eq_neg_tsum` : `a₆(q) = -∑ₘ cₘ · qᵐ/(1-qᵐ)` (`(12:K) ≠ 0`).
 * `TateCurvesTheta.TateParameter.norm_a₆_lt_one` : `‖a₆(q)‖ < 1` (integrality of `a₆`).
 * `TateCurvesTheta.TateParameter.tateCurve_c₄`, `norm_c₄_eq_one` : `c₄ = 1 - 48 a₄`, a unit of `𝒪`.
 * `TateCurvesTheta.TateParameter.norm_Δ_lt_one`,
@@ -74,34 +71,6 @@ noncomputable section
 
 namespace TateCurvesTheta
 
-/-- In a nonarchimedean normed additive group, the norm of an (unconditionally convergent) infinite
-sum is bounded by any uniform bound on its terms: `‖∑' n, f n‖ ≤ C` when every `‖f n‖ ≤ C`. This is
-the ultrametric strengthening of the triangle inequality passed to the limit of partial sums. -/
-private lemma norm_tsum_le {G : Type*} [NormedAddCommGroup G] [IsUltrametricDist G] {f : ℕ → G}
-    {C : ℝ} (hC : 0 ≤ C) (hf : Summable f) (h : ∀ n, ‖f n‖ ≤ C) : ‖∑' n, f n‖ ≤ C := by
-  have hcont : Tendsto (fun s : Finset ℕ => ‖∑ i ∈ s, f i‖) atTop (𝓝 ‖∑' n, f n‖) :=
-    (continuous_norm.tendsto _).comp hf.hasSum
-  refine le_of_tendsto hcont (Filter.Eventually.of_forall fun s => ?_)
-  exact IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hC fun i _ => h i
-
-/-- The integer coefficient `cₘ = (5 m³ + 7 m⁵)/12` (with `m = n + 1`) of the `a₆` series. It is a
-genuine integer thanks to `twelve_dvd_five_mul_cube_add_seven_mul_pow`. -/
-private def a₆Coeff (n : ℕ) : ℕ := (5 * (n + 1) ^ 3 + 7 * (n + 1) ^ 5) / 12
-
-/-- The term-wise divisibility `12 ∣ 5 m³ + 7 m⁵` underlying the integrality of the Tate
-coefficient `a₆`. Proved by checking all residues in `ZMod 12`. -/
-private lemma twelve_dvd_five_mul_cube_add_seven_mul_pow (n : ℕ) :
-    12 ∣ 5 * (n + 1) ^ 3 + 7 * (n + 1) ^ 5 := by
-  have h : ∀ x : ZMod 12, 5 * x ^ 3 + 7 * x ^ 5 = 0 := by decide
-  refine (ZMod.natCast_eq_zero_iff _ 12).mp ?_
-  push_cast
-  exact h ((n : ZMod 12) + 1)
-
-/-- Defining property of `a₆Coeff`: `12 · cₘ = 5 m³ + 7 m⁵`. -/
-private lemma twelve_mul_a₆Coeff (n : ℕ) :
-    12 * a₆Coeff n = 5 * (n + 1) ^ 3 + 7 * (n + 1) ^ 5 :=
-  Nat.mul_div_cancel' (twelve_dvd_five_mul_cube_add_seven_mul_pow n)
-
 namespace TateParameter
 
 variable {K : Type*} [NormedField K]
@@ -113,54 +82,11 @@ private lemma norm_ofNat_le_one [IsUltrametricDist K] (n : ℕ) [n.AtLeastTwo] :
   rw [← Nat.cast_ofNat]
   exact IsUltrametricDist.norm_natCast_le_one K _
 
-/-- The common analytic factor `qⁿ⁺¹ / (1 - qⁿ⁺¹)` shared by every Eisenstein term. -/
-private def qFactor (n : ℕ) : K := (t.q : K) ^ (n + 1) / (1 - (t.q : K) ^ (n + 1))
-
-/-- The Eisenstein series written with the shared factor pulled out. -/
-private lemma eisenstein_eq_tsum_qFactor (k : ℕ) :
-    t.eisenstein k = ∑' n : ℕ, ((n + 1 : ℕ) : K) ^ k * t.qFactor n := by
-  simp only [eisenstein, qFactor, mul_div_assoc]
-
-/-- The term-wise identity `5 (m³ Q) + 7 (m⁵ Q) = 12 (cₘ Q)`, where `Q = qᵐ/(1-qᵐ)` and
-`cₘ = a₆Coeff`, packaging the divisibility `12 ∣ 5 m³ + 7 m⁵`. -/
-private lemma term_combo (n : ℕ) :
-    5 * (((n + 1 : ℕ) : K) ^ 3 * t.qFactor n) + 7 * (((n + 1 : ℕ) : K) ^ 5 * t.qFactor n)
-      = 12 * ((a₆Coeff n : K) * t.qFactor n) := by
-  have hcast : 5 * ((n + 1 : ℕ) : K) ^ 3 + 7 * ((n + 1 : ℕ) : K) ^ 5 = 12 * (a₆Coeff n : K) := by
-    have h : ((5 * (n + 1) ^ 3 + 7 * (n + 1) ^ 5 : ℕ) : K) = ((12 * a₆Coeff n : ℕ) : K) := by
-      rw [twelve_mul_a₆Coeff]
-    push_cast at h ⊢
-    linear_combination h
-  linear_combination t.qFactor n * hcast
-
 section Nonarchimedean
 
 variable [IsUltrametricDist K]
 
-/-- The shared factor has norm `‖q‖ⁿ⁺¹`. -/
-private lemma norm_qFactor (n : ℕ) : ‖t.qFactor n‖ = ‖(t.q : K)‖ ^ (n + 1) := by
-  rw [qFactor, norm_div, norm_pow, t.norm_one_sub_qpow n, div_one]
-
 variable [CompleteSpace K]
-
-/-- The Eisenstein summands, written with the shared factor, are summable. -/
-private lemma summable_qFactor_smul (k : ℕ) :
-    Summable fun n : ℕ => ((n + 1 : ℕ) : K) ^ k * t.qFactor n := by
-  simpa only [qFactor, mul_div_assoc] using t.eisenstein_summand_summable k
-
-/-- The `a₆`-coefficient series `∑ₘ cₘ · qᵐ/(1-qᵐ)` is summable: each term has norm
-`≤ ‖q‖ⁿ⁺¹`, dominated by the geometric series `∑ ‖q‖ⁿ⁺¹`. -/
-private lemma summable_a₆Coeff_qFactor :
-    Summable fun n : ℕ => (a₆Coeff n : K) * t.qFactor n := by
-  have hg : Summable fun n : ℕ => ‖(t.q : K)‖ ^ (n + 1) := by
-    simpa only [pow_succ] using
-      (summable_geometric_of_lt_one (norm_nonneg _) t.norm_lt_one).mul_right ‖(t.q : K)‖
-  refine hg.of_norm_bounded fun n => ?_
-  rw [norm_mul, t.norm_qFactor n]
-  calc ‖(a₆Coeff n : K)‖ * ‖(t.q : K)‖ ^ (n + 1)
-      ≤ 1 * ‖(t.q : K)‖ ^ (n + 1) := by
-        gcongr; exact IsUltrametricDist.norm_natCast_le_one K (a₆Coeff n)
-    _ = ‖(t.q : K)‖ ^ (n + 1) := one_mul _
 
 /-- **Integrality of `a₄`.** The Tate coefficient `a₄(q) = -5 s₃(q)` has norm `< 1`, so it reduces
 to `0` in the residue field. -/
@@ -175,40 +101,11 @@ lemma norm_a₄_lt_one : ‖t.a₄‖ < 1 := by
     _ = ‖t.eisenstein 3‖ := one_mul _
     _ ≤ ‖(t.q : K)‖ := t.norm_eisenstein_le 3
 
-/-- The `5 s₃ + 7 s₅` combination collapses, term by term, into `12` times an *integer* series. -/
-private lemma eisenstein_combo :
-    5 * t.eisenstein 3 + 7 * t.eisenstein 5
-      = 12 * ∑' n : ℕ, (a₆Coeff n : K) * t.qFactor n := by
-  rw [eisenstein_eq_tsum_qFactor, eisenstein_eq_tsum_qFactor, ← tsum_mul_left, ← tsum_mul_left,
-    ← Summable.tsum_add ((t.summable_qFactor_smul 3).mul_left 5)
-      ((t.summable_qFactor_smul 5).mul_left 7), ← tsum_mul_left]
-  exact tsum_congr fun n => t.term_combo n
-
-/-- **The integral form of `a₆`.** For residue characteristic `≠ 2, 3` (`(12:K) ≠ 0`), the Tate
-coefficient is the negative of an *integer-coefficient* series, `a₆(q) = -∑ₘ cₘ · qᵐ/(1-qᵐ)`, which
-makes its integrality manifest. -/
-lemma a₆_eq_neg_tsum (h12 : (12 : K) ≠ 0) :
-    t.a₆ = -∑' n : ℕ, (a₆Coeff n : K) * t.qFactor n := by
-  rw [a₆_def, t.eisenstein_combo]
-  field_simp
-
-/-- **Integrality of `a₆`.** For residue characteristic `≠ 2, 3` the Tate coefficient
+/-- **Integrality of `a₆`.** For `(12 : K) ≠ 0` the Tate coefficient
 `a₆(q) = -(5 s₃(q) + 7 s₅(q))/12` has norm `< 1`, so it too reduces to `0` in the residue field.
-This is stronger than `Discriminant.norm_a₆_le`, which assumed `‖(12 : K)‖ = 1`. -/
-lemma norm_a₆_lt_one (h12 : (12 : K) ≠ 0) : ‖t.a₆‖ < 1 := by
-  refine lt_of_le_of_lt ?_ t.norm_lt_one
-  rw [t.a₆_eq_neg_tsum h12, norm_neg]
-  refine norm_tsum_le (norm_nonneg _) t.summable_a₆Coeff_qFactor fun n => ?_
-  rw [norm_mul, t.norm_qFactor n]
-  calc ‖(a₆Coeff n : K)‖ * ‖(t.q : K)‖ ^ (n + 1)
-      ≤ 1 * ‖(t.q : K)‖ ^ (n + 1) := by
-        gcongr; exact IsUltrametricDist.norm_natCast_le_one K (a₆Coeff n)
-    _ = ‖(t.q : K)‖ ^ (n + 1) := one_mul _
-    _ ≤ ‖(t.q : K)‖ :=
-        calc ‖(t.q : K)‖ ^ (n + 1)
-            ≤ ‖(t.q : K)‖ ^ 1 :=
-              pow_le_pow_of_le_one (norm_nonneg _) t.norm_lt_one.le (Nat.le_add_left 1 n)
-          _ = ‖(t.q : K)‖ := pow_one _
+This is the strict form of `A6Series.norm_a₆_le`. -/
+lemma norm_a₆_lt_one (h12 : (12 : K) ≠ 0) : ‖t.a₆‖ < 1 :=
+  lt_of_le_of_lt (t.norm_a₆_le h12) t.norm_lt_one
 
 omit [IsUltrametricDist K] [CompleteSpace K] in
 /-- The `c₄`-invariant of the Tate curve is `c₄ = 1 - 48 a₄(q)` (from `b₂ = 1`, `b₄ = 2 a₄`). -/
@@ -234,7 +131,7 @@ lemma norm_c₄_eq_one : ‖t.tateCurve.c₄‖ = 1 := by
 /-- **The discriminant reduces to `0`.** `‖Δ(E_q)‖ < 1`: expanding
 `Δ = -a₆ + a₄² - 64 a₄³ - 432 a₆² + 72 a₄ a₆` (`Discriminant.tateCurve_Δ_eq`), each term has norm
 `< 1` because `‖a₄‖, ‖a₆‖ < 1` and the integer coefficients have norm `≤ 1`; the ultrametric bound
-then gives `‖Δ‖ < 1`. Needs only `(12:K) ≠ 0` (residue characteristic `≠ 2, 3`). -/
+then gives `‖Δ‖ < 1`. Needs only `(12:K) ≠ 0`. -/
 lemma norm_Δ_lt_one (h12 : (12 : K) ≠ 0) : ‖t.tateCurve.Δ‖ < 1 := by
   have ha₄ := t.norm_a₄_lt_one
   have ha₆ := t.norm_a₆_lt_one h12
@@ -273,7 +170,7 @@ lemma norm_Δ_lt_one (h12 : (12 : K) ≠ 0) : ‖t.tateCurve.Δ‖ < 1 := by
 /-- **Multiplicative reduction of the Tate curve.** The invariant-level criterion: over the
 valuation ring `𝒪` the discriminant reduces to `0` (`‖Δ‖ < 1`, singular special fiber) while `c₄`
 reduces to a nonzero element (`‖c₄‖ = 1`). The singularity is therefore a *node* — the reduction is
-multiplicative, not additive (residue characteristic `≠ 2, 3`). -/
+multiplicative, not additive (`(12:K) ≠ 0`). -/
 theorem tateCurve_multiplicative_reduction (h12 : (12 : K) ≠ 0) :
     ‖t.tateCurve.c₄‖ = 1 ∧ ‖t.tateCurve.Δ‖ < 1 :=
   ⟨t.norm_c₄_eq_one, t.norm_Δ_lt_one h12⟩

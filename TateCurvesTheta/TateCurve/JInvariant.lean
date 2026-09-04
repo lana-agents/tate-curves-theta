@@ -24,7 +24,7 @@ This is the input for the existence and uniqueness of the Tate parameter with pr
 
 * `TateCurvesTheta.TateParameter.tateJ`: the `j`-invariant `c₄³/Δ` of `E_q`.
 * `TateCurvesTheta.TateParameter.tateJ_eq_j`: agreement with Mathlib's
-  `WeierstrassCurve.j` under `‖12‖ = 1`.
+  `WeierstrassCurve.j` under `(12 : K) ≠ 0`.
 * `TateCurvesTheta.TateParameter.norm_tateCurve_c₄`: `‖c₄(E_q)‖ = 1`.
 * `TateCurvesTheta.TateParameter.norm_tateJ`, `one_lt_norm_tateJ`.
 
@@ -91,12 +91,12 @@ omit [CompleteSpace K] [IsUltrametricDist K] in
 lemma tateJ_def : t.tateJ = t.tateCurve.c₄ ^ 3 / t.tateCurve.Δ := rfl
 
 /-- The defining equation of the `j`-invariant, denominator-cleared. -/
-lemma tateJ_mul_Δ (h12 : ‖(12 : K)‖ = 1) :
+lemma tateJ_mul_Δ (h12 : (12 : K) ≠ 0) :
     t.tateJ * t.tateCurve.Δ = t.tateCurve.c₄ ^ 3 :=
   div_mul_cancel₀ _ (t.tateCurve_Δ_ne_zero h12)
 
 /-- `tateJ` agrees with Mathlib's `j`-invariant of the elliptic curve `E_q`. -/
-lemma tateJ_eq_j (h12 : ‖(12 : K)‖ = 1) :
+lemma tateJ_eq_j (h12 : (12 : K) ≠ 0) :
     haveI : t.tateCurve.IsElliptic := t.tateCurve_isElliptic h12
     t.tateJ = t.tateCurve.j := by
   haveI : t.tateCurve.IsElliptic := t.tateCurve_isElliptic h12
@@ -105,12 +105,12 @@ lemma tateJ_eq_j (h12 : ‖(12 : K)‖ = 1) :
   rw [← WeierstrassCurve.coe_Δ', ← Units.val_inv_eq_inv_val]
 
 /-- **The norm of the `j`-invariant of the Tate curve**: `‖j(E_q)‖ = ‖q‖⁻¹`. -/
-theorem norm_tateJ (h12 : ‖(12 : K)‖ = 1) : ‖t.tateJ‖ = ‖(t.q : K)‖⁻¹ := by
+theorem norm_tateJ (h12 : (12 : K) ≠ 0) : ‖t.tateJ‖ = ‖(t.q : K)‖⁻¹ := by
   rw [tateJ, norm_div, norm_pow, t.norm_tateCurve_c₄, one_pow, t.norm_tateCurve_Δ h12,
     one_div]
 
 /-- **The Tate curve has non-integral `j`-invariant**: `1 < ‖j(E_q)‖`. -/
-theorem one_lt_norm_tateJ (h12 : ‖(12 : K)‖ = 1) : 1 < ‖t.tateJ‖ := by
+theorem one_lt_norm_tateJ (h12 : (12 : K) ≠ 0) : 1 < ‖t.tateJ‖ := by
   rw [t.norm_tateJ h12]
   exact (one_lt_inv₀ t.norm_q_pos).mpr t.norm_lt_one
 

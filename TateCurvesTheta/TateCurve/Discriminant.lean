@@ -6,7 +6,7 @@ Authors: The tate-curves-theta contributors
 import Mathlib.Analysis.Normed.Group.Ultra
 import Mathlib.Analysis.Normed.Field.Ultra
 import Mathlib.Analysis.SpecificLimits.Normed
-import TateCurvesTheta.TateCurve.Weierstrass
+import TateCurvesTheta.TateCurve.A6Series
 
 /-!
 # Nonvanishing of the discriminant of the Tate curve `E_q`
@@ -31,25 +31,27 @@ the issue, **without** proving the full product formula. The strategy is:
 
 ## The `12` hypothesis
 
-The coefficient `a₆(q) = -(5 s₃(q) + 7 s₅(q)) / 12` involves a division by `12`. Controlling its
-norm requires `12` to be a unit of norm one, i.e. that the residue characteristic is `≠ 2, 3`. We
-carry this as an explicit hypothesis `h12 : ‖(12 : K)‖ = 1` on the two `a₆`-dependent results and
-the discriminant theorem, rather than as a global instance, so that the statements stay honest
-about what is assumed. (Over a residue field of characteristic `2` or `3` the `a₆`-integrality that
-underlies the leading-term estimate rests instead on the exact `12`-divisibility of `5 s₃ + 7 s₅`,
-part of the deferred product-formula content.)
+The coefficient `a₆(q) = -(5 s₃(q) + 7 s₅(q)) / 12` involves a division by `12`, so the formula
+is only meaningful when `(12 : K) ≠ 0`. This is the *only* hypothesis on the residue
+characteristic: the bounds `‖a₆‖ ≤ ‖q‖` and `‖a₆ + q‖ ≤ ‖q‖²` (`A6Series.norm_a₆_le`,
+`A6Series.norm_a₆_add_q_le`) come from the integer-coefficient expansion
+`a₆ = -∑ₙ cₙ qⁿ⁺¹/(1 - qⁿ⁺¹)` and hold in every residue characteristic, in particular in residue
+characteristic `3`. We carry `h12 : (12 : K) ≠ 0` as an explicit hypothesis on the
+`a₆`-dependent results and the discriminant theorem, rather than as a global instance, so that the
+statements stay honest about what is assumed.
 
 ## What is proved vs. assumed
 
 * **Proved unconditionally** (no product formula): the leading-term estimates
   `norm_eisenstein_sub_q_le`, `norm_eisenstein_le`, `norm_a₄_le`, and the discriminant expansion
   `tateCurve_Δ_eq`.
-* **Proved under `‖(12 : K)‖ = 1`**: `norm_a₆_add_q_le`, `norm_a₆_le`, `tateCurve_Δ_ne_zero`, and
-  the upgrade `tateCurve_isElliptic`.
+* **Proved under `(12 : K) ≠ 0`**: `norm_tateCurve_Δ_sub_q_le`, `norm_tateCurve_Δ`,
+  `tateCurve_Δ_ne_zero`, and the upgrade `tateCurve_isElliptic` (using the `a₆` bounds of
+  `A6Series.lean`).
 * **Not proved here** (documented seam): the exact product formula
-  `Δ(E_q) = q · ∏ (1 - qⁿ)²⁴` and the removal of the `12`-hypothesis. The current Mathlib does not
-  expose a standalone `EllipticCurve` structure; upgrading is therefore packaged as the
-  `WeierstrassCurve.IsElliptic` typeclass instance `tateCurve_isElliptic`.
+  `Δ(E_q) = q · ∏ (1 - qⁿ)²⁴`. The current Mathlib does not expose a standalone `EllipticCurve`
+  structure; upgrading is therefore packaged as the `WeierstrassCurve.IsElliptic` typeclass
+  instance `tateCurve_isElliptic`.
 
 ## References
 
@@ -140,38 +142,6 @@ lemma norm_a₄_le : ‖t.a₄‖ ≤ ‖(t.q : K)‖ := by
         mul_le_mul (norm_ofNat_le_one 5) (t.norm_eisenstein_le 3) (norm_nonneg _) zero_le_one
     _ = ‖(t.q : K)‖ := one_mul _
 
-/-- **Leading term of `a₆`.** `a₆(q) = -q + O(q²)`, i.e. `‖a₆(q) + q‖ ≤ ‖q‖²`. Requires `12` to be
-a unit of norm one (residue characteristic `≠ 2, 3`). -/
-lemma norm_a₆_add_q_le (h12 : ‖(12 : K)‖ = 1) :
-    ‖t.a₆ + (t.q : K)‖ ≤ ‖(t.q : K)‖ ^ 2 := by
-  have h12ne : (12 : K) ≠ 0 := by
-    intro h; rw [h, norm_zero] at h12; exact zero_ne_one h12
-  have key : t.a₆ + (t.q : K)
-      = -(5 * (t.eisenstein 3 - (t.q : K)) + 7 * (t.eisenstein 5 - (t.q : K))) / 12 := by
-    rw [a₆_def]; field_simp; ring
-  rw [key, norm_div, h12, div_one, norm_neg]
-  refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ ?_)
-  · rw [norm_mul]
-    calc ‖(5 : K)‖ * ‖t.eisenstein 3 - (t.q : K)‖
-        ≤ 1 * ‖(t.q : K)‖ ^ 2 :=
-          mul_le_mul (norm_ofNat_le_one 5) (t.norm_eisenstein_sub_q_le 3) (norm_nonneg _)
-            zero_le_one
-      _ = ‖(t.q : K)‖ ^ 2 := one_mul _
-  · rw [norm_mul]
-    calc ‖(7 : K)‖ * ‖t.eisenstein 5 - (t.q : K)‖
-        ≤ 1 * ‖(t.q : K)‖ ^ 2 :=
-          mul_le_mul (norm_ofNat_le_one 7) (t.norm_eisenstein_sub_q_le 5) (norm_nonneg _)
-            zero_le_one
-      _ = ‖(t.q : K)‖ ^ 2 := one_mul _
-
-/-- The Tate coefficient `a₆(q)` is norm-bounded by `‖q‖` (residue characteristic `≠ 2, 3`). -/
-lemma norm_a₆_le (h12 : ‖(12 : K)‖ = 1) : ‖t.a₆‖ ≤ ‖(t.q : K)‖ := by
-  have h := t.norm_a₆_add_q_le h12
-  rw [show t.a₆ = (t.a₆ + (t.q : K)) - (t.q : K) from by ring, sub_eq_add_neg]
-  refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ ?_)
-  · exact h.trans t.norm_q_sq_le
-  · rw [norm_neg]
-
 omit [IsUltrametricDist K] [CompleteSpace K] in
 /-- **The discriminant of the Tate curve in terms of its coefficients.** Expanding
 `Δ = -b₂²b₈ - 8b₄³ - 27b₆² + 9b₂b₄b₆` with the Tate `b`-invariants `b₂ = 1`, `b₄ = 2a₄`,
@@ -183,7 +153,7 @@ lemma tateCurve_Δ_eq :
 
 /-- **Leading-term estimate for the discriminant**: `‖Δ(E_q) - q‖ ≤ ‖q‖²` — the
 discriminant is `q` to leading order (the `q`-expansion `Δ = q - 24q² + …`). -/
-lemma norm_tateCurve_Δ_sub_q_le (h12 : ‖(12 : K)‖ = 1) :
+lemma norm_tateCurve_Δ_sub_q_le (h12 : (12 : K) ≠ 0) :
     ‖t.tateCurve.Δ - (t.q : K)‖ ≤ ‖(t.q : K)‖ ^ 2 := by
   have hΔ := t.tateCurve_Δ_eq
   -- `Δ - q` is a sum of five terms each of norm `≤ ‖q‖²`.
@@ -237,7 +207,7 @@ lemma norm_q_sq_lt : ‖(t.q : K)‖ ^ 2 < ‖(t.q : K)‖ := by
 
 /-- **The exact norm of the discriminant**: `‖Δ(E_q)‖ = ‖q‖`, by the ultrametric isosceles
 law applied to the leading-term estimate. -/
-theorem norm_tateCurve_Δ (h12 : ‖(12 : K)‖ = 1) : ‖t.tateCurve.Δ‖ = ‖(t.q : K)‖ := by
+theorem norm_tateCurve_Δ (h12 : (12 : K) ≠ 0) : ‖t.tateCurve.Δ‖ = ‖(t.q : K)‖ := by
   have hDnorm := t.norm_tateCurve_Δ_sub_q_le h12
   have hlt : ‖t.tateCurve.Δ - (t.q : K)‖ < ‖(t.q : K)‖ :=
     lt_of_le_of_lt hDnorm t.norm_q_sq_lt
@@ -253,19 +223,19 @@ theorem norm_tateCurve_Δ (h12 : ‖(12 : K)‖ = 1) : ‖t.tateCurve.Δ‖ = �
     exact absurd (h.trans_lt (max_lt this hcon)) (lt_irrefl _)
   exact le_antisymm hup hdown
 
-/-- **Nonvanishing of the discriminant.** Over a complete nonarchimedean field (residue
-characteristic `≠ 2, 3`), `Δ(E_q) ≠ 0`: indeed `‖Δ(E_q)‖ = ‖q‖ > 0`. -/
-theorem tateCurve_Δ_ne_zero (h12 : ‖(12 : K)‖ = 1) : t.tateCurve.Δ ≠ 0 := by
+/-- **Nonvanishing of the discriminant.** Over a complete nonarchimedean field with
+`(12 : K) ≠ 0`, `Δ(E_q) ≠ 0`: indeed `‖Δ(E_q)‖ = ‖q‖ > 0`. -/
+theorem tateCurve_Δ_ne_zero (h12 : (12 : K) ≠ 0) : t.tateCurve.Δ ≠ 0 := by
   intro h
   have := t.norm_tateCurve_Δ h12
   rw [h, norm_zero] at this
   exact absurd this.symm (ne_of_gt t.norm_q_pos)
 
-/-- **The Tate curve is an elliptic curve.** Under the residue-characteristic hypothesis
-`‖(12 : K)‖ = 1`, the nonvanishing of the discriminant upgrades `E_q` to a
+/-- **The Tate curve is an elliptic curve.** Under the hypothesis `(12 : K) ≠ 0`, the
+nonvanishing of the discriminant upgrades `E_q` to a
 `WeierstrassCurve.IsElliptic` instance (the current Mathlib replacement for a standalone
 `EllipticCurve` structure). -/
-theorem tateCurve_isElliptic (h12 : ‖(12 : K)‖ = 1) : t.tateCurve.IsElliptic :=
+theorem tateCurve_isElliptic (h12 : (12 : K) ≠ 0) : t.tateCurve.IsElliptic :=
   ⟨(t.tateCurve_Δ_ne_zero h12).isUnit⟩
 
 end TateParameter

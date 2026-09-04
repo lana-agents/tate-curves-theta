@@ -48,7 +48,7 @@ namespace TateParameter
 variable {K : Type*} [NormedField K] [CompleteSpace K] [IsUltrametricDist K]
 variable (t : TateParameter K)
 variable (hmem : ∀ u : Kˣ, (∀ n : ℤ, (t.q : K) ^ n * (u : K) ≠ 1) →
-    t.tateCurve.toAffine.Equation (t.X u) (t.Y u)) (h12 : ‖(12 : K)‖ = 1)
+    t.tateCurve.toAffine.Equation (t.X u) (t.Y u)) (h12 : TameResidueChar K)
 
 omit [CompleteSpace K] [IsUltrametricDist K] in
 /-- The ultrametric domination law: `‖b‖ < ‖a‖` forces `‖a + b‖ = ‖a‖`. -/
@@ -134,7 +134,7 @@ lemma mem_range_of_slope_norm_gt {s : Kˣ} (hs : s ∉ t.qpowers)
       WeierstrassCurve.Affine.Point.some x y hns := by
   classical
   set W := t.tateCurve.toAffine with hW
-  haveI : W.IsElliptic := t.tateCurve_isElliptic h12
+  haveI : W.IsElliptic := t.tateCurve_isElliptic h12.2
   have hoff := t.qzpow_mul_ne_one_of_notMem hs
   have hnss : W.Nonsingular (t.X s) (t.Y s) :=
     WeierstrassCurve.Affine.equation_iff_nonsingular.mp (hmem s hoff)
@@ -189,7 +189,7 @@ theorem mem_range_tatePoint_of_unit_sphere {x y : K}
     (t.tateCurve_equation_iff x y).mp hns.1
   have hx0 : x ≠ 0 := by intro h; rw [h, norm_zero] at hx; linarith
   have ha₄x : ‖t.a₄ * x + t.a₆‖ ≤ ‖(t.q : K)‖ := by
-    refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ (t.norm_a₆_le h12))
+    refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ (t.norm_a₆_le h12.2))
     rw [norm_mul, hx, mul_one]
     exact t.norm_a₄_le
   have hrhs : ‖x ^ 3 + t.a₄ * x + t.a₆‖ = 1 := by
@@ -340,7 +340,7 @@ theorem mem_range_tatePoint_of_unit_sphere {x y : K}
             norm_mul, h4, one_mul, hx, mul_one]
           exact t.norm_a₄_le.trans_lt hq1
       · rw [norm_mul, h4, one_mul]
-        exact (t.norm_a₆_le h12).trans_lt hq1
+        exact (t.norm_a₆_le h12.2).trans_lt hq1
     -- `X(-1) ≡ -1/4` and `Y(-1) ≡ 1/8`
     have hp1 : ((-1 : Kˣ) : K) / (1 - ((-1 : Kˣ) : K)) ^ 2 = -4⁻¹ := by
       rw [hval, show (1 : K) - -1 = 2 by ring, show ((2 : K)) ^ 2 = 4 by norm_num,

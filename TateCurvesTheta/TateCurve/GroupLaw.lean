@@ -27,7 +27,7 @@ The additivity `tatePoint (u·v) = tatePoint u + tatePoint v` is proved in three
 * **degenerate orbit cases**: `u`, `v` or `u·v` in `qᶻ`, by `qᶻ`-invariance and negation;
 * **the general case**, by the translation trick `P(u·v) = P(u·s) + P(s⁻¹·v)` with an
   auxiliary unit `s` avoiding finitely many `qᶻ`-classes and square-classes
-  (`exists_unit_avoiding_sq`, using `‖2‖ = 1`, which follows from `‖12‖ = 1`).
+  (`exists_unit_avoiding_sq`, using `‖2‖ = 1`, the first component of `TameResidueChar K`).
 
 **Surjectivity seam.** Injectivity is complete; surjectivity is delivered for all affine
 points with `‖x‖ > 1` (`exists_tatePoint_eq_some`, from the fixed-point construction in
@@ -65,30 +65,13 @@ variable (t : TateParameter K)
 
 /-! ### Norm preliminaries -/
 
-omit [CompleteSpace K] in
-/-- In an ultrametric field, `‖12‖ = 1` forces `‖2‖ = 1` (residue characteristic is
-neither `2` nor `3`). -/
-lemma norm_two_eq_one_of_norm_twelve (h12 : ‖(12 : K)‖ = 1) : ‖(2 : K)‖ = 1 := by
-  have h2 : ‖(2 : K)‖ ≤ 1 := by
-    simpa using IsUltrametricDist.norm_natCast_le_one K 2
-  have h3 : ‖(3 : K)‖ ≤ 1 := by
-    simpa using IsUltrametricDist.norm_natCast_le_one K 3
-  have h223 : (2 : K) * 2 * 3 = 12 := by norm_num
-  have hprod : ‖(2 : K)‖ * ‖(2 : K)‖ * ‖(3 : K)‖ = 1 := by
-    rw [← norm_mul, ← norm_mul, h223, h12]
-  refine le_antisymm h2 ?_
-  by_contra hlt
-  rw [not_le] at hlt
-  have hsm : ‖(2 : K)‖ * ‖(2 : K)‖ * ‖(3 : K)‖ < 1 := by
-    nlinarith [norm_nonneg (2 : K), norm_nonneg (3 : K)]
-  linarith [hprod ▸ hsm]
+omit [CompleteSpace K] [IsUltrametricDist K] in
+/-- The first component of `TameResidueChar K`: `‖2‖ = 1` (residue characteristic `≠ 2`). -/
+lemma norm_two_eq_one_of_norm_twelve (h12 : TameResidueChar K) : ‖(2 : K)‖ = 1 := h12.1
 
 omit [CompleteSpace K] [IsUltrametricDist K] in
-/-- `‖12‖ = 1` gives `12 ≠ 0`. -/
-lemma twelve_ne_zero_of_norm (h12 : ‖(12 : K)‖ = 1) : (12 : K) ≠ 0 := by
-  intro h
-  rw [h, norm_zero] at h12
-  exact zero_ne_one h12
+/-- The second component of `TameResidueChar K`: `12 ≠ 0`. -/
+lemma twelve_ne_zero_of_norm (h12 : TameResidueChar K) : (12 : K) ≠ 0 := h12.2
 
 /-! ### Membership plumbing for the orbit subgroup `qᶻ` -/
 
@@ -146,7 +129,7 @@ lemma exists_sq_val_eq_of_mul_sq_mem {y s : Kˣ} (h : y * s ^ 2 ∈ t.qpowers) :
 /-! ### Good-pair additivity -/
 
 variable (hmem : ∀ u : Kˣ, (∀ n : ℤ, (t.q : K) ^ n * (u : K) ≠ 1) →
-    t.tateCurve.toAffine.Equation (t.X u) (t.Y u)) (h12 : ‖(12 : K)‖ = 1)
+    t.tateCurve.toAffine.Equation (t.X u) (t.Y u)) (h12 : TameResidueChar K)
 
 section Secant
 

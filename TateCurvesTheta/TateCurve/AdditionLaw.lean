@@ -46,7 +46,7 @@ namespace TateParameter
 variable {K : Type*} [NormedField K] [CompleteSpace K] [IsUltrametricDist K]
 variable (t : TateParameter K)
 variable (hmem : ∀ u : Kˣ, (∀ n : ℤ, (t.q : K) ^ n * (u : K) ≠ 1) →
-    t.tateCurve.toAffine.Equation (t.X u) (t.Y u)) (h12 : ‖(12 : K)‖ = 1)
+    t.tateCurve.toAffine.Equation (t.X u) (t.Y u)) (h12 : TameResidueChar K)
 
 omit [CompleteSpace K] [IsUltrametricDist K] in
 /-- Membership in `qpowers` is inversion-stable. -/
@@ -127,7 +127,7 @@ theorem tatePoint_add_of_line {u v : Kˣ} (hu : u ∉ t.qpowers) (hv : v ∉ t.q
     t.tatePoint hmem h12 u + t.tatePoint hmem h12 v = t.tatePoint hmem h12 (u * v) := by
   set w : Kˣ := (u * v)⁻¹ with hwdef
   set W := t.tateCurve.toAffine with hW
-  haveI : W.IsElliptic := t.tateCurve_isElliptic h12
+  haveI : W.IsElliptic := t.tateCurve_isElliptic h12.2
   -- curve equations for the three points
   have hcu : t.Y u ^ 2 + t.X u * t.Y u = t.X u ^ 3 + t.a₄ * t.X u + t.a₆ :=
     (t.tateCurve_equation_iff _ _).mp (hmem u (t.qzpow_mul_ne_one_of_notMem hu))

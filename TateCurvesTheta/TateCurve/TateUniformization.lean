@@ -10,9 +10,10 @@ import TateCurvesTheta.TateCurve.SurjectivitySphere
 # The Tate uniformization isomorphism `Kˣ/qᶻ ≃* E_q(K)`
 
 The capstone of the `q`-uniformization (issue #36): over a complete nonarchimedean field
-with `‖12‖ = 1`, the Tate point map is **surjective** — every point of the Mordell–Weil
-group `E_q(K)` is `tatePoint u` for some unit `u` — and therefore the injective
-homomorphism `Kˣ/qᶻ →* E_q(K)` of `GroupLaw.lean` is an **isomorphism**
+with `TameResidueChar K` (`‖2‖ = 1 ∧ 12 ≠ 0`, i.e. residue characteristic `≠ 2` and
+`12 ≠ 0`; residue characteristic `3` is allowed), the Tate point map is **surjective** — every
+point of the Mordell–Weil group `E_q(K)` is `tatePoint u` for some unit `u` — and therefore the
+injective homomorphism `Kˣ/qᶻ →* E_q(K)` of `GroupLaw.lean` is an **isomorphism**
 (`tateUniformization`), completing the exact sequence
 
   `1 → qᶻ → Kˣ → E_q(K) → 0`.
@@ -47,7 +48,7 @@ namespace TateParameter
 variable {K : Type*} [NormedField K] [CompleteSpace K] [IsUltrametricDist K]
 variable (t : TateParameter K)
 variable (hmem : ∀ u : Kˣ, (∀ n : ℤ, (t.q : K) ^ n * (u : K) ≠ 1) →
-    t.tateCurve.toAffine.Equation (t.X u) (t.Y u)) (h12 : ‖(12 : K)‖ = 1)
+    t.tateCurve.toAffine.Equation (t.X u) (t.Y u)) (h12 : TameResidueChar K)
 
 /-- **Surjectivity of the Tate point map**: every point of the Mordell–Weil group of the
 Tate curve is `tatePoint u` for some unit `u`. -/
@@ -80,7 +81,7 @@ theorem tatePoint_surjective : Function.Surjective (t.tatePoint hmem h12) := by
               calc ‖t.a₄‖ * ‖x‖ ≤ ‖(t.q : K)‖ * 1 :=
                     mul_le_mul t.norm_a₄_le hlt.le (norm_nonneg x) (norm_nonneg _)
                 _ < 1 := by rwa [mul_one]
-          · exact (t.norm_a₆_le h12).trans_lt hq1
+          · exact (t.norm_a₆_le h12.2).trans_lt hq1
         rw [hxy] at hL
         linarith
     · exact t.mem_range_tatePoint_of_unit_sphere hmem h12 hns heq

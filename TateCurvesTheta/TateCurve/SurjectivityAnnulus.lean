@@ -144,7 +144,7 @@ lemma Yterm_neg_one_eq {u : Kˣ} {c : K} (huc : (u : K) * c = (t.q : K)) (hc1 : 
 /-! ### The translation engine -/
 
 variable (hmem : ∀ u : Kˣ, (∀ n : ℤ, (t.q : K) ^ n * (u : K) ≠ 1) →
-    t.tateCurve.toAffine.Equation (t.X u) (t.Y u)) (h12 : ‖(12 : K)‖ = 1)
+    t.tateCurve.toAffine.Equation (t.X u) (t.Y u)) (h12 : TameResidueChar K)
 
 /-- **Exact-hit short-circuit.** If a translate `s` off the orbit satisfies `X(s) = x`, then
 the two curve equations factor as `(y - Y(s))·(y + Y(s) + x) = 0`, so the point `(x, y)` is
@@ -182,7 +182,7 @@ lemma mem_range_tatePoint_of_one_lt_slope {x y : K}
     (hlam : 1 < ‖(y - t.Y s) / (x - t.X s)‖) :
     ∃ u : Kˣ, t.tatePoint hmem h12 u = .some x y hns := by
   classical
-  haveI := t.tateCurve_isElliptic h12
+  haveI := t.tateCurve_isElliptic h12.2
   have hxne : x ≠ t.X s := hXne.symm
   have hns_s : t.tateCurve.toAffine.Nonsingular (t.X s) (t.Y s) :=
     WeierstrassCurve.Affine.equation_iff_nonsingular.mp
@@ -261,7 +261,7 @@ lemma mem_range_tatePoint_of_middle_zone {x y : K}
       nlinarith
     · rw [norm_mul]
       nlinarith [t.norm_a₄_le, norm_nonneg t.a₄, norm_nonneg x]
-    · exact (t.norm_a₆_le h12).trans_lt hq_lt
+    · exact (t.norm_a₆_le h12.2).trans_lt hq_lt
   have hprod : ‖y‖ * ‖y + x‖ = ‖x ^ 3 + t.a₄ * x + t.a₆‖ := by
     rw [← norm_mul, show y * (y + x) = y ^ 2 + x * y from by ring, hxy]
   have hyx : ‖y‖ ≤ ‖x‖ := by
@@ -355,7 +355,7 @@ lemma mem_range_tatePoint_of_middle_zone {x y : K}
   rcases hone with h1 | h2
   · exact t.mem_range_tatePoint_of_one_lt_slope hmem h12 hns hs hXeq hx1 hXs1 h1
   · -- the branch `-P` wins: conclude for `-P`, then negate
-    haveI := t.tateCurve_isElliptic h12
+    haveI := t.tateCurve_isElliptic h12.2
     have hnegY : t.tateCurve.toAffine.negY x y = -y - x := by
       rw [WeierstrassCurve.Affine.negY, tateCurve_a₁, tateCurve_a₃]
       ring
@@ -481,7 +481,7 @@ lemma mem_range_tatePoint_of_edge_zone {x y : K}
           _ = ‖(t.q : K)‖ * ‖y‖ := by rw [← hy2]; ring
       · rw [norm_mul]
         exact mul_le_mul t.norm_a₄_le hxy_le (norm_nonneg x) hq0.le
-      · refine (t.norm_a₆_add_q_le h12).trans ?_
+      · refine (t.norm_a₆_add_q_le h12.2).trans ?_
         rw [pow_two]
         exact mul_le_mul_of_nonneg_left hq_le_y hq0.le
     have hcancel : ‖y‖ * ‖x + y - c‖ ≤ ‖y‖ * ‖(t.q : K)‖ := by

@@ -184,20 +184,20 @@ variable (t : TateParameter K)
 /-- **The integral model of the Tate curve**: the Weierstrass model
 `y² + xy = x³ + a₄x + a₆` over the ring of integers of `K` (the coefficients satisfy
 `‖a₄‖, ‖a₆‖ ≤ ‖q‖ < 1`). -/
-def tateCurveInt (h12 : ‖(12 : K)‖ = 1) : _root_.WeierstrassCurve (integerRing K) :=
+def tateCurveInt (h12 : (12 : K) ≠ 0) : _root_.WeierstrassCurve (integerRing K) :=
   ⟨1, 0, 0,
     ⟨t.a₄, le_of_lt (lt_of_le_of_lt t.norm_a₄_le t.norm_lt_one)⟩,
     ⟨t.a₆, le_of_lt (lt_of_le_of_lt (t.norm_a₆_le h12) t.norm_lt_one)⟩⟩
 
 /-- The integral model recovers the Tate curve over `K`. -/
-lemma tateCurveInt_map_subtype (h12 : ‖(12 : K)‖ = 1) :
+lemma tateCurveInt_map_subtype (h12 : (12 : K) ≠ 0) :
     (t.tateCurveInt h12).map (integerRing K).subtype = t.tateCurve := by
   simp only [_root_.WeierstrassCurve.map, tateCurveInt, tateCurve]
   rfl
 
 /-- **The special fibre of the Tate curve is the nodal cubic** `y² + xy = x³`: reduction
 modulo the maximal ideal kills `a₄` and `a₆`. -/
-theorem tateCurveInt_reduction (h12 : ‖(12 : K)‖ = 1) :
+theorem tateCurveInt_reduction (h12 : (12 : K) ≠ 0) :
     (t.tateCurveInt h12).map (Ideal.Quotient.mk (integerIdeal K)) =
       WeierstrassCurve.nodalCubic := by
   have ha₄ : Ideal.Quotient.mk (integerIdeal K)
@@ -213,7 +213,7 @@ theorem tateCurveInt_reduction (h12 : ‖(12 : K)‖ = 1) :
 cubic, which is singular (`Δ̄ = 0`) of multiplicative type (`c₄̄ = 1 ≠ 0`) with the two
 distinct rational tangent directions `T` and `T + 1` at the node — over an arbitrary
 residue field. -/
-theorem isSplitMultiplicative_reduction (h12 : ‖(12 : K)‖ = 1) :
+theorem isSplitMultiplicative_reduction (h12 : (12 : K) ≠ 0) :
     ((t.tateCurveInt h12).map
         (Ideal.Quotient.mk (integerIdeal K))).IsSplitMultiplicative := by
   rw [t.tateCurveInt_reduction h12]
