@@ -20,6 +20,7 @@ import TateCurvesTheta.TateCurve.CoordinateExpansion
 import TateCurvesTheta.TateCurve.CoordinateInversion
 import TateCurvesTheta.TateCurve.DefectAnnulusLaurent
 import TateCurvesTheta.TateCurve.DefectCoeffBaseChange
+import TateCurvesTheta.TateCurve.CoordinateBaseChange
 import TateCurvesTheta.TateCurve.DefectVanishing
 import TateCurvesTheta.TateCurve.Discriminant
 import TateCurvesTheta.TateCurve.EisensteinKernels
