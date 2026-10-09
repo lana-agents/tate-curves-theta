@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 The tate-curves-theta contributors. All rights reserved.
+Copyright (c) 2026 LANA Project. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: The tate-curves-theta contributors
+Authors: LANA Project
 -/
 import Mathlib.Analysis.Normed.Module.Basic
 import TateCurvesTheta.QParameter.Basic
