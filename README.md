@@ -62,7 +62,8 @@ fails the build.
   argument.
 * The relation of theta values to continuous Kummer classes is not started.
 * Anabelian rigidity claims of *The Étale Theta Function* are out of scope by design.
-  This repository is also distinct from `elliptic-reduction` (reduction theory).
+  This repository is also distinct from `elliptic-reduction` (reduction theory; an empty
+  scaffold at present).
 
 ## Dependencies
 
@@ -70,6 +71,11 @@ Mathlib (`v4.32.0`) and, as a Lake dependency only,
 [`formal-schemes`](https://github.com/lana-agents/formal-schemes) (pinned in
 `lakefile.toml`). No file currently imports `FormalSchemes`; the integral model and the
 special fibre are done concretely over the unit ball (`integerRing`, `integerIdeal`).
+
+Intended links, not dependencies: the connection to Kummer classes is meant to use
+[`continuous-kummer-theory`](https://github.com/lana-agents/continuous-kummer-theory), and
+log-volumes [`padic-log-volume`](https://github.com/lana-agents/padic-log-volume). Both are
+currently empty scaffold repositories and are not required in `lakefile.toml`.
 
 ## Use in `iut`
 
