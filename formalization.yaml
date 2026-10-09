@@ -1,0 +1,173 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+# formalization.yaml (v0.4): repo-root metadata for this formalization,
+# following https://github.com/mathlib-initiative/formalization.yaml
+
+version: "v0.4"
+
+project:
+  name: "tate-curves-theta"
+  description: >-
+    A Lean 4 / Mathlib formalization of Tate curves, q-uniformization and the classical theta
+    function over a complete non-archimedean field K. For a Tate parameter q (a unit with ‖q‖ < 1)
+    it proves convergence, quasi-periodicity, inversion and the zero divisor of the theta function
+    θ, and the Jacobi triple product θ = ∏ unconditionally; the Weierstrass identity for the Tate
+    point (X(u), Y(u)) under 12 ≠ 0, the group law and the isomorphism Kˣ/qᶻ ≃* E_q(K) (Silverman,
+    Advanced Topics, V.3.1); the j-invariant with ‖j(E_q)‖ = ‖q‖⁻¹, and the characterization of
+    the Tate parameter: every j with ‖j‖ > 1 has a unique Tate parameter, whose curve has split
+    multiplicative reduction. Normalized orders (IUT I, Def. 3.1(c)) and base change along
+    isometric extensions are included.
+  authors:
+    - "Claude (Anthropic)"
+    - "LANA Project"
+  responsible_maintainers:
+    - "Christian Merten"
+  license: "Apache-2.0"
+
+sources:
+  - title: "Advanced Topics in the Arithmetic of Elliptic Curves"
+    authors: ["Joseph H. Silverman"]
+    type: "book"
+    location: "Ch. V (Theorem 3.1, the Tate curve and q-uniformization)"
+    relationship: "formalizes"
+    note: "The converse V.5.3 (every curve with split multiplicative reduction is some E_q) is not stated."
+    author_endorsement: "n/a"
+  - title: "The Étale Theta Function and its Frobenioid-theoretic Manifestations"
+    authors: ["Shinichi Mochizuki"]
+    type: "article"
+    location: "Publ. Res. Inst. Math. Sci. 45 (2009); Prop. 1.4 (classical content only)"
+    relationship: "adapts"
+    note: "Only the classical properties of the theta function are formalized; the anabelian content is out of scope."
+    author_endorsement: "not-contacted"
+  - title: "A review of non-Archimedean elliptic functions"
+    authors: ["John Tate"]
+    type: "article"
+    location: "Elliptic curves, modular forms, & Fermat's last theorem (Hong Kong, 1993), 162-184"
+    relationship: "background"
+    author_endorsement: "n/a"
+  - title: "Inter-universal Teichmüller Theory I"
+    authors: ["Shinichi Mochizuki"]
+    type: "article"
+    location: "Definition 3.1(c) (normalized order of the Tate parameter)"
+    relationship: "background"
+    author_endorsement: "not-contacted"
+
+related_formalizations:
+  - id: "https://github.com/lana-agents/formal-schemes"
+    relationship: "other"
+    note: "Lake dependency only (pinned 51aa935); no file currently imports FormalSchemes."
+  - id: "https://github.com/lana-agents/iut"
+    relationship: "other"
+    note: "Used by: iut pins this repository at ca6c227 to build the local Θ-data at the bad places."
+
+classification:
+  arxiv: ["math.NT", "math.AG"]
+  msc2020: ["11G07", "14H52", "11F27", "14G22"]
+
+status:
+  scope: >-
+    The classical q-uniformization and theta-function package over a complete non-archimedean
+    field: theta function and Jacobi triple product, the Tate curve, the isomorphism
+    Kˣ/qᶻ ≃* E_q(K), the j-invariant and the characterization of the Tate parameter, split
+    multiplicative reduction, normalized orders and isometric base change. Not formalized: the
+    converse Silverman V.5.3, the relation of theta values to Kummer classes, and the anabelian
+    content of The Étale Theta Function.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+  main_results:
+    - declaration: "TateCurvesTheta.TateParameter.theta_eq_thetaProd"
+      file: "TateCurvesTheta/Theta/Durfee.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.TateParameter.theta_eq_zero_iff"
+      file: "TateCurvesTheta/Theta/Durfee.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.TateParameter.theta_q_smul"
+      file: "TateCurvesTheta/Theta/Periodicity.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.TateParameter.tatePoint_mem'"
+      file: "TateCurvesTheta/TateCurve/TatePointOnCurve.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.TateParameter.tateUniformization"
+      file: "TateCurvesTheta/TateCurve/TateUniformization.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.TateParameter.tateJ_injective"
+      file: "TateCurvesTheta/QParameter/JParametrization.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.TateParameter.exists_tateParameter_tateJ_eq"
+      file: "TateCurvesTheta/QParameter/JParametrization.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.TateParameter.existsUnique_splitMultiplicative_tateParameter"
+      file: "TateCurvesTheta/QParameter/Characterization.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.TateParameter.isSplitMultiplicative_reduction"
+      file: "TateCurvesTheta/TateCurve/SplitReduction.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["claude-opus-4-8", "claude-fable-5", "claude-fable-5-1", "claude-opus-5-5"]
+      framework: "Claude Code"
+      tool_setup: >-
+        orchestra for running the agents, taxis for project management, and Claude (Claude Code) as the
+        coding agent; Lean/Lake builds with `lake build --wfail`.
+      prompting_notes: >-
+        Human input consisted of high-level task descriptions and scope decisions.
+  notes: >-
+    Agents were run with orchestra; project management (issues, status) was done in taxis;
+    Claude was the coding agent.
+
+fidelity:
+  divergences: >-
+    K is a field with [NormedField K] [CompleteSpace K] [IsUltrametricDist K]; the arithmetic
+    hypotheses are written into the statements: (12 : K) ≠ 0, or TameResidueChar K
+    (‖2‖ = 1 and 12 ≠ 0) for the group law and the uniformization. The surjectivity and
+    isomorphism statements take the Weierstrass identity as an argument, discharged by
+    tatePoint_mem'. The integral model and special fibre are treated concretely over the unit
+    ball rather than with formal schemes.
+
+review:
+  status: "agent-reviewed"
+  reviewers: ["Claude (Anthropic)"]
+  notes: >-
+    The formalization has only been reviewed by Claude; it has not been reviewed by a human.
+    All results are machine-checked by the Lean kernel; `#print axioms` of every main result listed
+    under status (checked on a build of this revision) gives only propext, Classical.choice and
+    Quot.sound, and `git grep` finds sorry only in prose, with no axiom declaration or
+    native_decide.
+
+alignment:
+  namespace: "TateCurvesTheta"
+  statements:
+    - source: "Silverman, Advanced Topics, Theorem V.3.1 (Tate uniformization)"
+      lean: "TateCurvesTheta.TateParameter.tateUniformization"
+      module: "TateCurvesTheta/TateCurve/TateUniformization.lean"
+      status: "proved"
+    - source: "Jacobi triple product for the theta function (Étale Theta Function, Prop. 1.4, classical part)"
+      lean: "TateCurvesTheta.TateParameter.theta_eq_thetaProd"
+      module: "TateCurvesTheta/Theta/Durfee.lean"
+      status: "proved"
+    - source: "Existence and uniqueness of the Tate parameter for ‖j‖ > 1"
+      lean: "TateCurvesTheta.TateParameter.existsUnique_splitMultiplicative_tateParameter"
+      module: "TateCurvesTheta/QParameter/Characterization.lean"
+      status: "proved"
+
+acknowledgements: "Built on Mathlib (Apache-2.0)."
