@@ -571,7 +571,7 @@ def evalAt (x : Kˣ) (k : ℕ) (A : Kˣ) : t.weightSpace k A →ₗ[K] K where
     refine tsum_congr fun n => ?_
     simp [mul_assoc]
 
-set_option linter.unusedSectionVars false in
+omit [CompleteSpace K] in
 @[simp] lemma evalAt_apply (x : Kˣ) (c : t.weightSpace k A) :
     evalAt x k A c = ∑' n : ℤ, (c : ℤ → K) n * (x : K) ^ n := rfl
 

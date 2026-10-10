@@ -46,9 +46,8 @@ open Filter Topology
 
 namespace IsUltrametricDist
 
-variable {ι : Type*} {M : Type*} [NormedAddCommGroup M] [IsUltrametricDist M] [CompleteSpace M]
+variable {ι : Type*} {M : Type*} [NormedAddCommGroup M] [IsUltrametricDist M]
 
-set_option linter.unusedSectionVars false in
 /-- **Uniform strict bound on the non-dominant part.** If `g` is summable and `‖g i‖ < r` for
 every `i` while `0 < r`, and moreover the family decays (which summability supplies), there is a
 single `C < r` bounding every `‖g i‖`. Stated for the `if`-masked family so it can bound the

@@ -83,7 +83,7 @@ def LaurentStrictDom (K : Type*) [NormedField K] : Prop :=
     ∃ (u : Kˣ) (n₀ : ℤ),
       ∀ n : ℤ, n ≠ n₀ → ‖c n * (u : K) ^ n‖ < ‖c n₀ * (u : K) ^ n₀‖
 
-variable [CompleteSpace K] [IsUltrametricDist K]
+variable [IsUltrametricDist K]
 
 /-- Under `LaurentStrictDom`, a nonzero convergent Laurent series does **not** vanish identically
 on `Kˣ`: at the strictly-dominating radius the dominant-term principle

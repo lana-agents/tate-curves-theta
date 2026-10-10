@@ -269,10 +269,10 @@ theorem laurentStrictDom_of_denselyNormed : LaurentStrictDom K := by
     have hchain4 : ‖c m‖ * ρ ^ m ≤ ‖c n₀‖ * ρ ^ n₀ := hn₀max m hmF
     linarith
 
-variable [CompleteSpace K] [IsUltrametricDist K]
+variable [IsUltrametricDist K]
 
 /-- **The nonarchimedean Laurent identity theorem holds for densely-normed fields.** A convergent
-two-sided Laurent series over a complete densely-normed ultrametric field is determined by its
+two-sided Laurent series over a densely-normed ultrametric field is determined by its
 values on `Kˣ`. -/
 theorem laurentCoeffUnique_of_denselyNormed : LaurentCoeffUnique K :=
   laurentCoeffUnique_of_strictDom laurentStrictDom_of_denselyNormed
