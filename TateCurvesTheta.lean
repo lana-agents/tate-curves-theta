@@ -6,10 +6,14 @@ Authors: LANA Project
 import TateCurvesTheta.Analysis.MaxTerm
 import TateCurvesTheta.Analysis.Strassmann
 import TateCurvesTheta.Analysis.StrassmannSphere
+import TateCurvesTheta.Analysis.UltrametricSqrt
 import TateCurvesTheta.Analysis.UltrametricSum
 import TateCurvesTheta.AnalyticQuotient
 import TateCurvesTheta.Arithmetic.DivisorConvolution
 import TateCurvesTheta.Basic
+import TateCurvesTheta.Converse.SplitIsTate
+import TateCurvesTheta.Converse.TangentCriterion
+import TateCurvesTheta.Converse.WeierstrassIso
 import TateCurvesTheta.QParameter.BaseChange
 import TateCurvesTheta.QParameter.Basic
 import TateCurvesTheta.QParameter.Characterization
@@ -22,11 +26,11 @@ import TateCurvesTheta.TateCurve.AbelStep
 import TateCurvesTheta.TateCurve.AdditionLaw
 import TateCurvesTheta.TateCurve.CoordinateAnnulusLaurent
 import TateCurvesTheta.TateCurve.CoordinateAnnulusLaurentY
+import TateCurvesTheta.TateCurve.CoordinateBaseChange
 import TateCurvesTheta.TateCurve.CoordinateExpansion
 import TateCurvesTheta.TateCurve.CoordinateInversion
 import TateCurvesTheta.TateCurve.DefectAnnulusLaurent
 import TateCurvesTheta.TateCurve.DefectCoeffBaseChange
-import TateCurvesTheta.TateCurve.CoordinateBaseChange
 import TateCurvesTheta.TateCurve.DefectVanishing
 import TateCurvesTheta.TateCurve.Discriminant
 import TateCurvesTheta.TateCurve.EisensteinKernels
