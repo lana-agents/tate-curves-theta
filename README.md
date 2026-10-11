@@ -73,18 +73,42 @@ For an elliptic curve `W` over `K` (`(12 : K) ≠ 0`, any residue characteristic
   `exists_sq_eq_of_norm_sub_one_lt_norm_four` (`‖a - 1‖ < ‖4‖`), and the Weierstrass
   isomorphism criterion `exists_variableChange_iff_isSquare` for equal `j ≠ 0, 1728` together
   with the automorphism computation `eq_one_or_eq_negChange`.
-* Residue characteristic `≠ 2` (`‖2‖ = 1`), for a model with `‖c₄‖ = 1`, `‖Δ‖ < 1`:
-  `isSquare_gammaInvariant_iff_exists_tangent_root` (split reduction, i.e. a root of the
-  tangent quadratic at the node mod `𝔪`, iff `γ(W)` is a square) and
-  `exists_variableChange_tateCurve_of_tangent_root`, the library form of iut's
-  `Iut.exists_variableChange_tateCurve` (same hypotheses).
+* Tangent criterion (`TangentCriterion.lean`), for a model with `‖c₄‖ = 1`, `‖Δ‖ < 1`:
+  `isSquare_gammaInvariant_iff_exists_tangent_root'` (**every residue characteristic**, `2 ≠ 0`
+  in `K`): the tangent quadratic at the node (discriminant `-c₄c₆`) has a root mod `𝔪` iff `γ(W)`
+  is a square, via the Hensel form `isSquare_sq_add_four_mul` (`‖s‖ = 1`, `‖e‖ < 1` ⇒ `s² + 4e`
+  is a square). The `‖2‖ = 1` versions `isSquare_gammaInvariant_iff_exists_tangent_root` and
+  `exists_variableChange_tateCurve_of_tangent_root` (library form of iut's
+  `Iut.exists_variableChange_tateCurve`, same hypotheses) are kept.
+* Reduction type (`ReductionType.lean`, **every residue characteristic**): `IsIntegral`,
+  `integralModel`, `reduction` (over `𝒪/𝔪`), and `HasSplitMultiplicativeReduction W` (some
+  change of variables gives an integral model whose reduction is `IsSplitMultiplicative`: nodal,
+  node at the origin, split tangent cone). `hasSplitMultiplicativeReduction_iff` (`12 ≠ 0`):
+  split multiplicative ⟺ `‖j‖ > 1 ∧ IsSquare γ(W)`; `hasSplitMultiplicativeReduction_iff_exists_tateCurve`:
+  ⟺ `W ≅ E_q` for some `q`; `hasSplitMultiplicativeReduction_iff_exists_tangent_root`: for an
+  integral model with `‖c₄‖ = 1`, `‖Δ‖ < 1`, split ⟺ the tangent quadratic has an integral root
+  mod `𝔪`. Key step `isSquare_gammaInvariant_of_isSplitMultiplicative`: a split node gives
+  `b₂ = s² + 4e` (a square `σ²`) and `-c₄c₆ = (σ⁵)² + 4m`, `‖m‖ < 1`; Hensel at precision `‖4‖`
+  covers residue characteristic `2`. `TateParameter.hasSplitMultiplicativeReduction`.
+* Non-split case (`QuadraticTwist.lean`, `NonSplit.lean`): `quadraticTwist W d`
+  (`y² = x³ + d b₂ x² + 8d² b₄ x + 16 d³ b₆`, `c₄ ↦ 2⁴d²c₄`, `c₆ ↦ 2⁶d³c₆`, same `j`,
+  `γ ↦ γ/(4d)`); `exists_variableChange_quadraticTwist_iff` (`W ≅ W^d` iff `d` square,
+  `j ≠ 0, 1728`). `nonsplit_tateCurve`: for `‖j(W)‖ > 1` and `γ = γ(W)` not a square, `W ≇ E_q`,
+  `W ≅ E_q^γ` over `K` (`exists_variableChange_quadraticTwist_tateCurve`, valid for any `γ`),
+  `E_q^γ ≇ E_q` over `K`, `[K(√γ) : K] = 2` for `SqrtGammaField W = K[X]/(X² - γ)`, and
+  `W ≅ E_q` over `K(√γ)` (base changes along `algebraMap`). General extensions:
+  `exists_variableChange_map_tateCurve_iff` (any field `L / K`: `W_L ≅ (E_q)_L` iff `γ` is a
+  square in `L`) and, for a valued extension `[NormedField L] [NormedAlgebra K L]`,
+  `exists_variableChange_baseChange_tateCurve_iff` (`W_L ≅ E_{q,L}`, via `map_tateCurve`).
 
 ### Open / out of scope
 
-* The converse is stated with `γ(W) ∈ K²` as the splitting condition. Its identification with
-  the abstract reduction type (`IsSplitMultiplicative` of the reduced minimal model) is proved
-  only through the tangent quadratic, and only for residue characteristic `≠ 2`; the non-split
-  case (`W` is the quadratic twist of `E_q` by `K(√γ)`) is not formalized.
+* The reduction type is the repository's concrete notion (`HasSplitMultiplicativeReduction`: an
+  integral model, reached by a change of variables, reducing to a split node at the origin), not
+  a scheme-theoretic Néron/minimal-model notion. No norm is put on `K(√γ)` itself
+  (`SqrtGammaField` is a bare `AdjoinRoot`; Mathlib's spectral norm needs a
+  `NontriviallyNormedField` base): the `K(√γ)` statement is about the base change of `E_q`, and
+  the valued form holds for any `[NormedField L] [NormedAlgebra K L]` in which `γ` is a square.
 * The relation of theta values to continuous Kummer classes is not started.
 * Anabelian rigidity claims of *The Étale Theta Function* are out of scope by design.
   This repository is also distinct from `elliptic-reduction` (reduction theory; an empty

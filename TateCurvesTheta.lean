@@ -11,6 +11,9 @@ import TateCurvesTheta.Analysis.UltrametricSum
 import TateCurvesTheta.AnalyticQuotient
 import TateCurvesTheta.Arithmetic.DivisorConvolution
 import TateCurvesTheta.Basic
+import TateCurvesTheta.Converse.NonSplit
+import TateCurvesTheta.Converse.QuadraticTwist
+import TateCurvesTheta.Converse.ReductionType
 import TateCurvesTheta.Converse.SplitIsTate
 import TateCurvesTheta.Converse.TangentCriterion
 import TateCurvesTheta.Converse.WeierstrassIso

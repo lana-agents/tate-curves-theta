@@ -33,8 +33,10 @@ The only analytic input beyond the `q`-parameter is that `γ(E_q)` is a square
 algebraic input is the isomorphism criterion `exists_variableChange_iff_isSquare` for curves with
 equal `j ≠ 0, 1728`.
 
-The link with the reduction type in residue characteristic `≠ 2` (the tangent quadratic at the
-node has a rational root) is `TateCurvesTheta.Converse.TangentCriterion`.
+The link with the reduction type, in every residue characteristic, is
+`TateCurvesTheta.Converse.ReductionType` (split multiplicative reduction ⟺ `‖j‖ > 1` and `γ` a
+square) and `TateCurvesTheta.Converse.TangentCriterion` (the tangent quadratic at the node); the
+non-split case (quadratic twist by `γ`) is `TateCurvesTheta.Converse.NonSplit`.
 
 This ports and generalises `Iut.exists_variableChange_tateCurve` of `lana-agents/iut`
 (`Iut/Cor312/ThetaData/TateIsomorphism.lean`), which assumed `‖2‖ = 1` and a model with

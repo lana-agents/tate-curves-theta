@@ -31,7 +31,7 @@ sources:
     type: "book"
     location: "Ch. V (Theorem 3.1, the Tate curve and q-uniformization)"
     relationship: "formalizes"
-    note: "Includes the converse V.5.3: a curve with ‖j‖ > 1 is K-isomorphic to E_q iff -c₄/c₆ is a square, with q unique and the isomorphism unique up to sign."
+    note: "Includes the converse V.5.3: a curve with ‖j‖ > 1 is K-isomorphic to E_q iff -c₄/c₆ is a square (iff it has split multiplicative reduction, every residue characteristic), with q unique and the isomorphism unique up to sign; otherwise it is the quadratic twist of E_q by -c₄/c₆."
     author_endorsement: "n/a"
   - title: "The Étale Theta Function and its Frobenioid-theoretic Manifestations"
     authors: ["Shinichi Mochizuki"]
@@ -72,9 +72,11 @@ status:
     Kˣ/qᶻ ≃* E_q(K), the j-invariant and the characterization of the Tate parameter, split
     multiplicative reduction, normalized orders and isometric base change, and the converse Silverman V.5.3 (every curve with
     ‖j‖ > 1 and square twist invariant -c₄/c₆ is K-isomorphic to a unique E_q, the isomorphism
-    unique up to sign; in residue characteristic ≠ 2 the square condition is the tangent-quadratic
-    form of split reduction). Not formalized: the non-split twist description, the relation of theta values to Kummer classes, and the anabelian
-    content of The Étale Theta Function.
+    unique up to sign; in every residue characteristic the square condition is equivalent to split
+    multiplicative reduction and to the tangent quadratic splitting mod 𝔪; in the non-split case
+    W is K-isomorphic to the quadratic twist of E_q by γ and isomorphic to E_q over K(√γ)).
+    Not formalized: the relation of theta values to Kummer classes, and the anabelian content of
+    The Étale Theta Function.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: ["propext", "Classical.choice", "Quot.sound"]
@@ -149,6 +151,36 @@ status:
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       literature_dependencies: []
+    - declaration: "TateCurvesTheta.isSquare_gammaInvariant_iff_exists_tangent_root'"
+      file: "TateCurvesTheta/Converse/TangentCriterion.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.hasSplitMultiplicativeReduction_iff"
+      file: "TateCurvesTheta/Converse/ReductionType.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.hasSplitMultiplicativeReduction_iff_exists_tateCurve"
+      file: "TateCurvesTheta/Converse/ReductionType.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.hasSplitMultiplicativeReduction_iff_exists_tangent_root"
+      file: "TateCurvesTheta/Converse/ReductionType.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.nonsplit_tateCurve"
+      file: "TateCurvesTheta/Converse/NonSplit.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.exists_variableChange_baseChange_tateCurve_iff"
+      file: "TateCurvesTheta/Converse/NonSplit.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
 
 automation:
   methods:
@@ -197,6 +229,14 @@ alignment:
     - source: "Existence and uniqueness of the Tate parameter for ‖j‖ > 1"
       lean: "TateCurvesTheta.TateParameter.existsUnique_splitMultiplicative_tateParameter"
       module: "TateCurvesTheta/QParameter/Characterization.lean"
+      status: "proved"
+    - source: "Silverman, Advanced Topics, Theorem V.5.3 (split case and reduction type)"
+      lean: "TateCurvesTheta.hasSplitMultiplicativeReduction_iff_exists_tateCurve"
+      module: "TateCurvesTheta/Converse/ReductionType.lean"
+      status: "proved"
+    - source: "Silverman, Advanced Topics, Theorem V.5.3 (non-split case: quadratic twist)"
+      lean: "TateCurvesTheta.nonsplit_tateCurve"
+      module: "TateCurvesTheta/Converse/NonSplit.lean"
       status: "proved"
 
 acknowledgements: "Built on Mathlib (Apache-2.0)."
