@@ -20,14 +20,10 @@ determined by `j(E_q)` via the ultrametric isometry `‖j₁ - j₂‖ = ‖q₁
 every non-integral `j` occurs (`JParametrization.lean`), and the special fibre of the
 integral model is the split nodal cubic `y² + xy = x³` (`SplitReduction.lean`).
 
-**Remaining seam (issue #36).** The classical statement "every elliptic curve over `K`
-with split multiplicative reduction is isomorphic to `E_q` for this unique `q`"
-additionally requires identifying an abstract curve with non-integral `j` with the
-Weierstrass model `E_{q(j)}` up to `K`-isomorphism (triviality of the quadratic twist in
-the split case, Silverman ATAEC V.5.3). That identification is part of the Tate
-uniformization isomorphism tracked in issue #36, which this issue's statement defers to
-("using the Tate-uniformization issue"); the `q`-parameter side — existence, uniqueness,
-normalization and reduction behaviour of `q` itself — is complete here.
+**The converse.** The classical statement "every elliptic curve over `K` with split
+multiplicative reduction is isomorphic to `E_q` for this unique `q`" (Silverman ATAEC V.5.3,
+triviality of the quadratic twist) is `TateCurvesTheta.exists_variableChange_tateCurve_iff` and
+`TateCurvesTheta.existsUnique_tateParameter` in `TateCurvesTheta/Converse/SplitIsTate.lean`.
 
 ## Main results
 

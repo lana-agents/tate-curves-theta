@@ -54,12 +54,37 @@ fails the build.
 * Base change along isometric extensions `L/K`: `baseChange`, `ord_baseChange`,
   `orderZ_baseChange`, `algebraMap_X`, `algebraMap_Y`, `map_tateCurve`, `algebraMap_tateJ`.
 
+### Converse: split multiplicative curves are Tate curves (Silverman V.5.3)
+
+For an elliptic curve `W` over `K` (`(12 : K) ≠ 0`, any residue characteristic) with
+`‖j(W)‖ > 1`, and the twist invariant `gammaInvariant W = -c₄/c₆` (`TateCurvesTheta/Converse/`):
+
+* `exists_variableChange_tateCurve_iff`: `W` is `K`-isomorphic (by a Weierstrass change of
+  variables) to `E_q` for `q = ofJ j(W)` iff `γ(W)` is a square in `K`;
+  `exists_variableChange_tateCurve` is the existence direction.
+* `exists_tateParameter_variableChange_iff`: `W ≅ E_q` for *some* `q` iff `‖j(W)‖ > 1` and
+  `γ(W)` is a square.
+* Uniqueness: `eq_ofJ_of_smul_eq_tateCurve` (the parameter is `ofJ j(W)`) and
+  `smul_eq_tateCurve_iff` (the isomorphism is unique up to the automorphism `-1`,
+  `negChange E_q = (-1, 0, -1, 0)`, `negChange_tateCurve`); packaged as
+  `existsUnique_tateParameter`.
+* Inputs: `TateParameter.isSquare_gammaInvariant` (`γ(E_q)` is a square: `-c₄c₆(E_q) = 1 + 8δ`,
+  `‖δ‖ < 1`), Hensel's lemma for square roots in every residue characteristic
+  `exists_sq_eq_of_norm_sub_one_lt_norm_four` (`‖a - 1‖ < ‖4‖`), and the Weierstrass
+  isomorphism criterion `exists_variableChange_iff_isSquare` for equal `j ≠ 0, 1728` together
+  with the automorphism computation `eq_one_or_eq_negChange`.
+* Residue characteristic `≠ 2` (`‖2‖ = 1`), for a model with `‖c₄‖ = 1`, `‖Δ‖ < 1`:
+  `isSquare_gammaInvariant_iff_exists_tangent_root` (split reduction, i.e. a root of the
+  tangent quadratic at the node mod `𝔪`, iff `γ(W)` is a square) and
+  `exists_variableChange_tateCurve_of_tangent_root`, the library form of iut's
+  `Iut.exists_variableChange_tateCurve` (same hypotheses).
+
 ### Open / out of scope
 
-* The classical converse "every curve over `K` with split multiplicative reduction is
-  `K`-isomorphic to some `E_q`" (Silverman V.5.3, triviality of the quadratic twist) is not
-  stated here; downstream (`iut`) builds the isomorphism from `tateJ` plus its own twist
-  argument.
+* The converse is stated with `γ(W) ∈ K²` as the splitting condition. Its identification with
+  the abstract reduction type (`IsSplitMultiplicative` of the reduced minimal model) is proved
+  only through the tangent quadratic, and only for residue characteristic `≠ 2`; the non-split
+  case (`W` is the quadratic twist of `E_q` by `K(√γ)`) is not formalized.
 * The relation of theta values to continuous Kummer classes is not started.
 * Anabelian rigidity claims of *The Étale Theta Function* are out of scope by design.
   This repository is also distinct from `elliptic-reduction` (reduction theory; an empty
@@ -78,6 +103,10 @@ log-volumes [`padic-log-volume`](https://github.com/lana-agents/padic-log-volume
 currently empty scaffold repositories and are not required in `lakefile.toml`.
 
 ## Use in `iut`
+
+The converse V.5.3 (`TateCurvesTheta/Converse/`) generalises iut's
+`Iut/Cor312/ThetaData/{UltrametricSqrt,TateIsomorphism}.lean` and the automorphism part of
+`TateStructureUnique.lean`; iut does not use it yet (it pins an older commit).
 
 [`lana-agents/iut`](https://github.com/lana-agents/iut) pins this repository at
 `ca6c227` and uses it to build the local Θ-data at the bad places (`Iut/Cor312/ThetaData/`,

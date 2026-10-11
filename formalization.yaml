@@ -14,7 +14,9 @@ project:
     point (X(u), Y(u)) under 12 ≠ 0, the group law and the isomorphism Kˣ/qᶻ ≃* E_q(K) (Silverman,
     Advanced Topics, V.3.1); the j-invariant with ‖j(E_q)‖ = ‖q‖⁻¹, and the characterization of
     the Tate parameter: every j with ‖j‖ > 1 has a unique Tate parameter, whose curve has split
-    multiplicative reduction. Normalized orders (IUT I, Def. 3.1(c)) and base change along
+    multiplicative reduction; conversely (Silverman V.5.3) every elliptic curve with ‖j‖ > 1 whose
+    twist invariant -c₄/c₆ is a square is K-isomorphic to E_q for a unique q, by a change of
+    variables unique up to sign. Normalized orders (IUT I, Def. 3.1(c)) and base change along
     isometric extensions are included.
   authors:
     - "Claude (Anthropic)"
@@ -29,7 +31,7 @@ sources:
     type: "book"
     location: "Ch. V (Theorem 3.1, the Tate curve and q-uniformization)"
     relationship: "formalizes"
-    note: "The converse V.5.3 (every curve with split multiplicative reduction is some E_q) is not stated."
+    note: "Includes the converse V.5.3: a curve with ‖j‖ > 1 is K-isomorphic to E_q iff -c₄/c₆ is a square, with q unique and the isomorphism unique up to sign."
     author_endorsement: "n/a"
   - title: "The Étale Theta Function and its Frobenioid-theoretic Manifestations"
     authors: ["Shinichi Mochizuki"]
@@ -68,8 +70,10 @@ status:
     The classical q-uniformization and theta-function package over a complete non-archimedean
     field: theta function and Jacobi triple product, the Tate curve, the isomorphism
     Kˣ/qᶻ ≃* E_q(K), the j-invariant and the characterization of the Tate parameter, split
-    multiplicative reduction, normalized orders and isometric base change. Not formalized: the
-    converse Silverman V.5.3, the relation of theta values to Kummer classes, and the anabelian
+    multiplicative reduction, normalized orders and isometric base change, and the converse Silverman V.5.3 (every curve with
+    ‖j‖ > 1 and square twist invariant -c₄/c₆ is K-isomorphic to a unique E_q, the isomorphism
+    unique up to sign; in residue characteristic ≠ 2 the square condition is the tangent-quadratic
+    form of split reduction). Not formalized: the non-split twist description, the relation of theta values to Kummer classes, and the anabelian
     content of The Étale Theta Function.
   sorry_count: 0
   sorry_in_definitions: 0
@@ -117,6 +121,31 @@ status:
       literature_dependencies: []
     - declaration: "TateCurvesTheta.TateParameter.isSplitMultiplicative_reduction"
       file: "TateCurvesTheta/TateCurve/SplitReduction.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.exists_tateParameter_variableChange_iff"
+      file: "TateCurvesTheta/Converse/SplitIsTate.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.exists_variableChange_tateCurve_iff"
+      file: "TateCurvesTheta/Converse/SplitIsTate.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.existsUnique_tateParameter"
+      file: "TateCurvesTheta/Converse/SplitIsTate.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.smul_eq_tateCurve_iff"
+      file: "TateCurvesTheta/Converse/SplitIsTate.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.exists_variableChange_tateCurve_of_tangent_root"
+      file: "TateCurvesTheta/Converse/TangentCriterion.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       literature_dependencies: []
