@@ -103,26 +103,51 @@ For an elliptic curve `W` over `K` (`(12 : K) ≠ 0`, any residue characteristic
 
 ### Theta values and continuous Kummer classes (`TateCurvesTheta/Kummer/`)
 
-Uses [`continuous-kummer-theory`](https://github.com/lana-agents/continuous-kummer-theory)
-(`kummer n K Ω : Kˣ →* H¹_cont(Gal(Ω/K), μ_n)`, `kummerZHat` into `H¹_cont(G_K, Ẑ(1))`,
-`restriction_kummer`, `Decomposition.decomposition_kummerValue`). Scope (in progress):
+Uses [`continuous-kummer-theory`](https://github.com/lana-agents/continuous-kummer-theory):
+`kummer n K Ω : Kˣ →* H¹_cont(Gal(Ω/K), μ_n)`, `kummerZHat K Ω` into `H¹_cont(G_K, Ẑ(1))`,
+`restriction_kummer`, `Decomposition.decomposition_kummerValue`.
 
-* (i) **Kummer classes of theta values.** For `u ∈ Kˣ` off the divisor `-qᶻ`, the value
-  `θ(u) ∈ Kˣ` and its classes `κ_n(θ(u))`, `κ_Ẑ(θ(u))`. Relations from the functional
-  equations: `q`-translation (`κ(θ(qᵐu)) = κ(q)^{-e(m)} κ(u)^{-m} κ(θ(u))`), inversion, and, for
-  a square root `s` of `q` in `K`, the IUT-type values `κ(θ(s^{2j-1})) = κ(s)^{-j²} κ(θ(s⁻¹))`
-  (theta values are `q^{j²/2}` up to a common factor); compatibility with restriction to an
-  isometric extension `L/K` (`θ` commutes with base change).
-* (ii) **Function vs. value.** The germ of `θ` at a point `u` in the multiplicative local
-  coordinate, `Θ_u = ∑ₙ q^{e(n)} uⁿ (1+X)ⁿ ∈ K[[X]]` (with `∑ₖ Θ_{u,k} tᵏ = θ(u(1+t))` for
-  `‖t‖ < 1`), is a unit of the completed local ring `K[[X]]`; for any valuation subring `A` of an
-  algebraic closure `Ω` of a field `F ⊇ K[[X]]` (e.g. `K((X))`) dominating `K[[X]]`, the
-  restriction of `κ_F(Θ_u)` to the decomposition group `D_A` is the inflation of `κ_K(θ(u))`.
-  This is the precise form available without étale/tempered fundamental groups of curves: the
-  Kummer class of the étale theta function on the tempered cover is not formalised.
+* **(i) Kummer classes of theta values** (`ThetaValues.lean`). Off the divisor `-qᶻ`, `θ(u)` is a
+  unit `thetaUnit u hu : Kˣ`. Relations from the functional equations, first in `Kˣ` and then
+  for every homomorphism `Kˣ →* G` into a commutative group (`map_thetaUnit_*`), stated for
+  `kummer n K Ω` and `kummerZHat K Ω`:
+  * `qᶻ`-translates: `thetaUnit_zpow_q_smul`, `kummer_thetaUnit_zpow_q_smul`,
+    `kummer_thetaUnit_q_smul`, `kummerZHat_thetaUnit_zpow_q_smul`:
+    `κ(θ(qᵐu)) = κ(q)^{-e(m)} κ(u)^{-m} κ(θ(u))`, `e(m) = m(m+1)/2`;
+  * inversion: `thetaUnit_inv`, `kummer_thetaUnit_inv`, `kummerZHat_thetaUnit_inv`:
+    `κ(θ(u⁻¹)) = κ(u) κ(θ(u))`;
+  * the IUT-type values at `√q^{2j-1}` ([EtTh] §1): for `s² = q` in `K`, `theta_sqrt_ne_zero`
+    (these points are never zeros), `theta_sqrt_zpow` (`θ(s^{2j-1}) = s^{-j²} θ(s⁻¹)`),
+    `kummer_thetaUnit_sqrt`, `kummerZHat_thetaUnit_sqrt`:
+    `κ(θ(s^{2j-1})) = κ(s)^{-j²} κ(θ(s⁻¹))`, so up to one common class these theta values have
+    the Kummer classes of `q^{-j²/2}`;
+  * compatibility with the `μ_n`-components: `h1Proj_kummerZHat_thetaUnit`;
+  * base change and restriction: `algebraMap_theta` (`θ` commutes with every extension of
+    valued fields `L/K`), `map_thetaUnit`, `restriction_kummer_thetaUnit`
+    (`res_{L/K} κ_K(θ(u)) = κ_L(θ_{q_L}(u))`).
+* **(ii) The Kummer class of `θ` as a function vs. its value** (`ThetaGerm.lean`). The function
+  side is the germ of `θ` in the completed local ring `K⟦X⟧` at `u` (coordinate `u(1 + X)`):
+  `thetaGerm u = ∑ₙ q^{e(n)} uⁿ (1 + X)ⁿ`, with integer binomial coefficients `binomCoeff n k`
+  of `(1 + X)ⁿ`, `n ∈ ℤ`. It is the germ of `θ`: `hasSum_thetaGerm` (for `‖w‖ < 1`,
+  `∑ₖ coeff_k(Θ_u) wᵏ = θ(u(1 + w))`, via `hasSum_binom` and Fubini); `constantCoeff_thetaGerm`
+  (`Θ_u(0) = θ(u)`); `thetaGermUnit` (a unit off the divisor). For a field `F ⊇ K⟦X⟧` (`hCF`;
+  e.g. `K((X))`, `laurentSeries_algebraMap_C`), `Ω/F` algebraic and a valuation subring
+  `A ⊆ Ω` dominating `K⟦X⟧` (existence: `exists_valuationSubring_dominating`,
+  `exists_valuationSubring_dominating_laurentSeries`), `decomposition_kummer_thetaGerm`: the
+  restriction of `κ_F(Θ_u)` to the decomposition group `D_A` (coefficients reduced mod `𝔪_A`)
+  is the inflation along `D_A → Gal(κ(A)/K)` of `κ_K(θ(u))`. Inputs: `residue_eq_pointEval`
+  (reduction mod `A` is evaluation at `X = 0`), `kummerValue_thetaGermUnit`.
 
 ### Open / out of scope
 
+* Theta and Kummer classes: there is no étale or tempered fundamental group of the Tate curve
+  (or its `ℤ`-cover) in Mathlib, so the Kummer class of the *étale theta function* on
+  `Π^{temp}` ([EtTh] Prop. 1.4 / Thm. 1.6) is not formalised; the function-vs-value comparison
+  is local, in the completed local ring at the point and its decomposition groups. The
+  hypotheses that `κ(A)` is algebraic over `K` with `n`-th roots are left as instance arguments
+  (true for `Ω` algebraically closed, not derived here). The theta values are over `K` itself
+  (`u ∈ Kˣ`, `s ∈ K` with `s² = q`); points over extensions are handled by base change
+  (`restriction_kummer_thetaUnit`).
 * The reduction type is the repository's concrete notion (`HasSplitMultiplicativeReduction`: an
   integral model, reached by a change of variables, reducing to a split node at the origin), not
   a scheme-theoretic Néron/minimal-model notion. No norm is put on `K(√γ)` itself

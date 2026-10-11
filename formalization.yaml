@@ -17,7 +17,9 @@ project:
     multiplicative reduction; conversely (Silverman V.5.3) every elliptic curve with ‖j‖ > 1 whose
     twist invariant -c₄/c₆ is a square is K-isomorphic to E_q for a unique q, by a change of
     variables unique up to sign. Normalized orders (IUT I, Def. 3.1(c)) and base change along
-    isometric extensions are included.
+    isometric extensions are included. Kummer classes of theta values (via
+    continuous-kummer-theory): relations from the functional equations, restriction, and the
+    restriction of the Kummer class of the germ of θ to a decomposition group.
   authors:
     - "Claude (Anthropic)"
     - "LANA Project"
@@ -54,6 +56,9 @@ sources:
     author_endorsement: "not-contacted"
 
 related_formalizations:
+  - id: "https://github.com/lana-agents/continuous-kummer-theory"
+    relationship: "other"
+    note: "Lake dependency (pinned 98b67df): Kummer maps, restriction and decomposition-group comparison used in TateCurvesTheta/Kummer/."
   - id: "https://github.com/lana-agents/formal-schemes"
     relationship: "other"
     note: "Lake dependency only (pinned 51aa935); no file currently imports FormalSchemes."
@@ -75,7 +80,12 @@ status:
     unique up to sign; in every residue characteristic the square condition is equivalent to split
     multiplicative reduction and to the tangent quadratic splitting mod 𝔪; in the non-split case
     W is K-isomorphic to the quadratic twist of E_q by γ and isomorphic to E_q over K(√γ)).
-    Not formalized: the relation of theta values to Kummer classes, and the anabelian content of
+    Kummer classes of theta values (continuous-kummer-theory): relations in H¹_cont(G_K, μ_n) and
+    H¹_cont(G_K, Ẑ(1)) from the functional equations (q-translates, inversion, the values at
+    √q^{2j-1}, which are q^{-j²/2} up to a common factor), restriction to extensions, and the
+    comparison of the Kummer class of the germ of θ in K⟦X⟧ with the class of its value on a
+    decomposition group. Not formalized: the Kummer class of the étale theta function on a tempered
+    fundamental group (no étale/tempered π₁ of curves in Mathlib), and the anabelian content of
     The Étale Theta Function.
   sorry_count: 0
   sorry_in_definitions: 0
@@ -178,6 +188,36 @@ status:
       literature_dependencies: []
     - declaration: "TateCurvesTheta.exists_variableChange_baseChange_tateCurve_iff"
       file: "TateCurvesTheta/Converse/NonSplit.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.TateParameter.kummer_thetaUnit_zpow_q_smul"
+      file: "TateCurvesTheta/Kummer/ThetaValues.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.TateParameter.kummer_thetaUnit_sqrt"
+      file: "TateCurvesTheta/Kummer/ThetaValues.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.TateParameter.kummerZHat_thetaUnit_sqrt"
+      file: "TateCurvesTheta/Kummer/ThetaValues.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.TateParameter.restriction_kummer_thetaUnit"
+      file: "TateCurvesTheta/Kummer/ThetaValues.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.TateParameter.hasSum_thetaGerm"
+      file: "TateCurvesTheta/Kummer/ThetaGerm.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+    - declaration: "TateCurvesTheta.TateParameter.decomposition_kummer_thetaGerm"
+      file: "TateCurvesTheta/Kummer/ThetaGerm.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       literature_dependencies: []
