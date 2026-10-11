@@ -101,6 +101,26 @@ For an elliptic curve `W` over `K` (`(12 : K) ≠ 0`, any residue characteristic
   square in `L`) and, for a valued extension `[NormedField L] [NormedAlgebra K L]`,
   `exists_variableChange_baseChange_tateCurve_iff` (`W_L ≅ E_{q,L}`, via `map_tateCurve`).
 
+### Theta values and continuous Kummer classes (`TateCurvesTheta/Kummer/`)
+
+Uses [`continuous-kummer-theory`](https://github.com/lana-agents/continuous-kummer-theory)
+(`kummer n K Ω : Kˣ →* H¹_cont(Gal(Ω/K), μ_n)`, `kummerZHat` into `H¹_cont(G_K, Ẑ(1))`,
+`restriction_kummer`, `Decomposition.decomposition_kummerValue`). Scope (in progress):
+
+* (i) **Kummer classes of theta values.** For `u ∈ Kˣ` off the divisor `-qᶻ`, the value
+  `θ(u) ∈ Kˣ` and its classes `κ_n(θ(u))`, `κ_Ẑ(θ(u))`. Relations from the functional
+  equations: `q`-translation (`κ(θ(qᵐu)) = κ(q)^{-e(m)} κ(u)^{-m} κ(θ(u))`), inversion, and, for
+  a square root `s` of `q` in `K`, the IUT-type values `κ(θ(s^{2j-1})) = κ(s)^{-j²} κ(θ(s⁻¹))`
+  (theta values are `q^{j²/2}` up to a common factor); compatibility with restriction to an
+  isometric extension `L/K` (`θ` commutes with base change).
+* (ii) **Function vs. value.** The germ of `θ` at a point `u` in the multiplicative local
+  coordinate, `Θ_u = ∑ₙ q^{e(n)} uⁿ (1+X)ⁿ ∈ K[[X]]` (with `∑ₖ Θ_{u,k} tᵏ = θ(u(1+t))` for
+  `‖t‖ < 1`), is a unit of the completed local ring `K[[X]]`; for any valuation subring `A` of an
+  algebraic closure `Ω` of a field `F ⊇ K[[X]]` (e.g. `K((X))`) dominating `K[[X]]`, the
+  restriction of `κ_F(Θ_u)` to the decomposition group `D_A` is the inflation of `κ_K(θ(u))`.
+  This is the precise form available without étale/tempered fundamental groups of curves: the
+  Kummer class of the étale theta function on the tempered cover is not formalised.
+
 ### Open / out of scope
 
 * The reduction type is the repository's concrete notion (`HasSplitMultiplicativeReduction`: an
@@ -109,22 +129,22 @@ For an elliptic curve `W` over `K` (`(12 : K) ≠ 0`, any residue characteristic
   (`SqrtGammaField` is a bare `AdjoinRoot`; Mathlib's spectral norm needs a
   `NontriviallyNormedField` base): the `K(√γ)` statement is about the base change of `E_q`, and
   the valued form holds for any `[NormedField L] [NormedAlgebra K L]` in which `γ` is a square.
-* The relation of theta values to continuous Kummer classes is not started.
 * Anabelian rigidity claims of *The Étale Theta Function* are out of scope by design.
   This repository is also distinct from `elliptic-reduction` (reduction theory; an empty
   scaffold at present).
 
 ## Dependencies
 
-Mathlib (`v4.32.0`) and, as a Lake dependency only,
+Mathlib (`v4.32.0`),
+[`continuous-kummer-theory`](https://github.com/lana-agents/continuous-kummer-theory) (pinned at
+`98b67df`, same Mathlib commit; used by `TateCurvesTheta/Kummer/`) and, as a Lake dependency only,
 [`formal-schemes`](https://github.com/lana-agents/formal-schemes) (pinned in
 `lakefile.toml`). No file currently imports `FormalSchemes`; the integral model and the
 special fibre are done concretely over the unit ball (`integerRing`, `integerIdeal`).
 
-Intended links, not dependencies: the connection to Kummer classes is meant to use
-[`continuous-kummer-theory`](https://github.com/lana-agents/continuous-kummer-theory), and
-log-volumes [`padic-log-volume`](https://github.com/lana-agents/padic-log-volume). Both are
-currently empty scaffold repositories and are not required in `lakefile.toml`.
+Intended link, not a dependency: log-volumes
+[`padic-log-volume`](https://github.com/lana-agents/padic-log-volume) (an empty scaffold
+repository, not required in `lakefile.toml`).
 
 ## Use in `iut`
 

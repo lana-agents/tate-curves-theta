@@ -19,5 +19,10 @@ name = "formal-schemes"
 git = "https://github.com/lana-agents/formal-schemes"
 rev = "9d40f4d0972b64774e537cbaf52c30162927296c"
 
+[[require]]
+name = "continuous-kummer-theory"
+git = "https://github.com/lana-agents/continuous-kummer-theory"
+rev = "98b67dfe9c82415aa17caa633d93960b6829af2e"
+
 [[lean_lib]]
 name = "TateCurvesTheta"
