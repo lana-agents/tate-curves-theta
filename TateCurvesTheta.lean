@@ -18,6 +18,7 @@ import TateCurvesTheta.Converse.SplitIsTate
 import TateCurvesTheta.Converse.TangentCriterion
 import TateCurvesTheta.Converse.WeierstrassIso
 import TateCurvesTheta.Kummer.ThetaGerm
+import TateCurvesTheta.Kummer.ThetaGermClosed
 import TateCurvesTheta.Kummer.ThetaValues
 import TateCurvesTheta.QParameter.BaseChange
 import TateCurvesTheta.QParameter.Basic

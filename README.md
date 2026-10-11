@@ -137,6 +137,23 @@ Uses [`continuous-kummer-theory`](https://github.com/lana-agents/continuous-kumm
   restriction of `κ_F(Θ_u)` to the decomposition group `D_A` (coefficients reduced mod `𝔪_A`)
   is the inflation along `D_A → Gal(κ(A)/K)` of `κ_K(θ(u))`. Inputs: `residue_eq_pointEval`
   (reduction mod `A` is evaluation at `X = 0`), `kummerValue_thetaGermUnit`.
+* **(iii) Over an algebraically closed field** (`ThetaGermClosed.lean`). The instance
+  hypotheses of `decomposition_kummer_thetaGerm` on `κ(A)` and `Ω` are derived:
+  `isAlgClosed_residueField` (the residue field of a valuation subring of an algebraically
+  closed field is algebraically closed: lift a monic polynomial, take a root in `Ω`; it is
+  integral over `A`, hence in `A`), `hasKummerRoots_of_isAlgClosed` (`n ≠ 0`, any
+  characteristic), and `isIntegral_residueField`: if `Ω` is algebraic over `F = Frac K⟦X⟧`
+  (`IsFractionRing K⟦X⟧ F`, e.g. `K((X))`) and `A` dominates `K⟦X⟧`, then `κ(A)` is algebraic
+  over `K` (clear denominators of a polynomial over `F`, divide by the common power of `X`, reduce
+  at `X = 0`); hence `isAlgClosure_residueField(_laurentSeries)`: `κ(A)` is an algebraic closure
+  of `K`. Corollaries `decomposition_kummer_thetaGerm_of_isAlgClosed` (any `F = Frac K⟦X⟧`) and
+  `decomposition_kummer_thetaGerm_laurentSeries` (`F = K((X))`, `Ω` e.g.
+  `AlgebraicClosure K((X))`, canonical `K`-algebra structure on `κ(A)`): the only hypotheses left
+  are `n ≠ 0`, that `A` dominates `K⟦X⟧` (such `A` exist), and `θ(u) ≠ 0`. The hypothesis
+  `F = Frac K⟦X⟧` is genuinely needed for "κ(A) algebraic over K": for e.g. `F = K((X))(Y)`
+  there are `A` dominating `K⟦X⟧` with the residue of `Y` transcendental over `K`, and then
+  `Gal(κ(A)/K)` (with the Krull topology used by `kummer`) is not the profinite Galois group of
+  an algebraic extension. `n ≠ 0` is needed since `HasKummerRoots 0` fails.
 
 ### Open / out of scope
 
@@ -144,9 +161,9 @@ Uses [`continuous-kummer-theory`](https://github.com/lana-agents/continuous-kumm
   (or its `ℤ`-cover) in Mathlib, so the Kummer class of the *étale theta function* on
   `Π^{temp}` ([EtTh] Prop. 1.4 / Thm. 1.6) is not formalised; the function-vs-value comparison
   is local, in the completed local ring at the point and its decomposition groups. The
-  hypotheses that `κ(A)` is algebraic over `K` with `n`-th roots are left as instance arguments
-  (true for `Ω` algebraically closed, not derived here). The theta values are over `K` itself
-  (`u ∈ Kˣ`, `s ∈ K` with `s² = q`); points over extensions are handled by base change
+  hypotheses that `κ(A)` is algebraic over `K` with `n`-th roots are derived for `Ω`
+  algebraically closed and algebraic over `Frac K⟦X⟧` (see (iii)). The theta values are over
+  `K` itself (`u ∈ Kˣ`, `s ∈ K` with `s² = q`); points over extensions are handled by base change
   (`restriction_kummer_thetaUnit`).
 * The reduction type is the repository's concrete notion (`HasSplitMultiplicativeReduction`: an
   integral model, reached by a change of variables, reducing to a split node at the origin), not
